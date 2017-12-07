@@ -13,6 +13,10 @@ use app\components\AccessControlExtend;
 use app\modules\ModUsuarios\models\EntUsuarios;
 use app\models\RelUsuarioArea;
 use app\models\EntPreguntas;
+use app\models\EntCuestionario;
+use app\models\RelUsuarioCuestionario;
+use app\models\EntRespuestas;
+use app\models\RelUsuarioRespuesta;
 
 class SiteController extends Controller
 {
@@ -86,19 +90,9 @@ class SiteController extends Controller
 
     public function actionEvaluacion(){
         $usuario = Yii::$app->user->identity;
-        $userArea = RelUsuarioArea::find()->where(['id_usuario'=>$usuario->id_usuario])->one();
-        $usersArea = RelUsuarioArea::find()->where(['id_area'=>$userArea->id_area])->all();
+        $empleados = EntUsuarios::find()->where(['id_area'=>$usuario->id_area])->all();
+        $empleadosOtros = EntUsuarios::find()->where(['!=', 'id_area', $usuario->id_area])->all();
 
-        $arrayIdUsers = [];
-        $i = 0;
-        foreach($usersArea as $user){
-            $arrayIdUsers[$i] = $user->id_usuario;
-            $i++;
-        }
-        //var_dump($arrayIdUsers);exit();
-        $empleados = EntUsuarios::find()->where(['in', 'id_usuario', $arrayIdUsers])->all();
-        $empleadosOtros = EntUsuarios::find()->where(['not in', 'id_usuario', $arrayIdUsers])->all();
-        //var_dump($empleados);exit;
         if($empleados && $empleadosOtros){
             return $this->render('vista-empleados',[
                 'empleados' => $empleados,
@@ -108,13 +102,56 @@ class SiteController extends Controller
     }
 
     public function actionPreguntasUsuario($token = null){
-        $usuario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
-        $preguntas = EntPreguntas::find()->all();
+        $usuario = Yii::$app->user->identity;
+        $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
+
+        $relUsuarioCuest = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->andWhere(['id_usuario_calificado'=>$usuarioCuestionario->id_usuario])->one();
+        //var_dump($relUsuarioCuest);exit;
+        if($relUsuarioCuest == null){
+            $cuestionario = EntCuestionario::find()->where(['id_area'=>$usuarioCuestionario->id_area])->one();
+            
+            $relUsuarioCuest = new RelUsuarioCuestionario;
+            $relUsuarioCuest->id_usuario = $usuario->id_usuario;
+            $relUsuarioCuest->id_usuario_calificado = $usuarioCuestionario->id_usuario;
+            $relUsuarioCuest->id_cuestionario = $cuestionario->id_cuestionario;
+            $relUsuarioCuest->id_evaluacion = $cuestionario->id_evaluacion;
+
+            $relUsuarioCuest->save();
+        }
+        $relUserResp = RelUsuarioRespuesta::find()->where(['id_usuario_cuestionario'=>$relUsuarioCuest->id_usuario_cuestionario])->select('id_respuesta');
+        $preguntasContestadas = [];
+        if($relUserResp){
+            $preguntasContestadas = EntRespuestas::find()->where([ 
+                'in', 'id_respuesta', $relUserResp,
+            ])->select('id_pregunta');
+        }
+        $cuestionario = EntCuestionario::find()->where(['id_area'=>$usuarioCuestionario->id_area])->one();    
+        $pregunta = EntPreguntas::find()->where(['id_cuestionario'=>$cuestionario->id_cuestionario])->andWhere([ 
+            'not in',
+            'id_pregunta',
+            $preguntasContestadas 
+        ])->orderBy('id_pregunta')->one(); 
+        
+        if(isset($_POST['respuesta'])){
+            $respuesta = new EntRespuestas;
+            $respuesta->id_pregunta = $pregunta->id_pregunta;
+            $respuesta->save();
+
+            $nuevaRelUserResp = new RelUsuarioRespuesta;
+            $nuevaRelUserResp->id_usuario_cuestionario = $relUsuarioCuest->id_usuario_cuestionario;
+            $nuevaRelUserResp->id_respuesta = $respuesta->id_respuesta;
+            $nuevaRelUserResp->id_respuesta = $respuesta->id_respuesta;
+            $nuevaRelUserResp->txt_valor = $_POST['respuesta'];
+            $nuevaRelUserResp->save();
+            
+            return $this->redirect(['preguntas-usuario?token='.$usuarioCuestionario->txt_token]);
+        }
 
         return $this->render('vista-preguntas',[
             'usuario' => $usuario,
-            'preguntas' => $preguntas
-        ]);
+            'usuarioCuestionario' => $usuarioCuestionario,
+            'pregunta' => $pregunta
+        ]); 
     }
 
     /**
