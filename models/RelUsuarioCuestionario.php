@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "rel_usuario_cuestionario".
@@ -37,13 +38,13 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_usuario', 'id_usuario_calificado', 'id_cuestionario', 'id_evaluacion', 'b_completado'], 'required'],
+            [['id_usuario', 'id_usuario_calificado', 'id_cuestionario', 'id_evaluacion'], 'required'],
             [['id_usuario', 'id_usuario_calificado', 'id_cuestionario', 'id_evaluacion', 'b_completado'], 'integer'],
             [['fch_creacion'], 'safe'],
             [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
-            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
             [['id_evaluacion'], 'exist', 'skipOnError' => true, 'targetClass' => EntEvaluaciones::className(), 'targetAttribute' => ['id_evaluacion' => 'id_evaluacion']],
-            [['id_usuario_calificado'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario_calificado' => 'id_usuario']],
+            [['id_usuario_calificado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_calificado' => 'id_usuario']],
         ];
     }
 

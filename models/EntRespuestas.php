@@ -8,10 +8,10 @@ use Yii;
  * This is the model class for table "ent_respuestas".
  *
  * @property string $id_respuesta
- * @property string $id_cuestionario
+ * @property string $id_pregunta
  * @property string $fch_creacion
  *
- * @property EntCuestionario $idCuestionario
+ * @property EntPreguntas $idPregunta
  * @property RelUsuarioRespuesta[] $relUsuarioRespuestas
  */
 class EntRespuestas extends \yii\db\ActiveRecord
@@ -30,10 +30,10 @@ class EntRespuestas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cuestionario'], 'required'],
-            [['id_cuestionario'], 'integer'],
+            [['id_pregunta'], 'required'],
+            [['id_pregunta'], 'integer'],
             [['fch_creacion'], 'safe'],
-            [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
+            [['id_pregunta'], 'exist', 'skipOnError' => true, 'targetClass' => EntPreguntas::className(), 'targetAttribute' => ['id_pregunta' => 'id_pregunta']],
         ];
     }
 
@@ -44,7 +44,7 @@ class EntRespuestas extends \yii\db\ActiveRecord
     {
         return [
             'id_respuesta' => 'Id Respuesta',
-            'id_cuestionario' => 'Id Cuestionario',
+            'id_pregunta' => 'Id Pregunta',
             'fch_creacion' => 'Fch Creacion',
         ];
     }
@@ -52,9 +52,9 @@ class EntRespuestas extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdCuestionario()
+    public function getIdPregunta()
     {
-        return $this->hasOne(EntCuestionario::className(), ['id_cuestionario' => 'id_cuestionario']);
+        return $this->hasOne(EntPreguntas::className(), ['id_pregunta' => 'id_pregunta']);
     }
 
     /**
