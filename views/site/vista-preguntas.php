@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\web\View;
 ?>
-<h3>Preguntas</h3>
+<h3>Pregunta</h3>
 <?php
 echo Html::beginForm( [ 
     'preguntas-usuario?token='.$usuarioCuestionario->txt_token, 
