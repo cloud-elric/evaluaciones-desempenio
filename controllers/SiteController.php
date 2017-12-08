@@ -17,6 +17,7 @@ use app\models\EntCuestionario;
 use app\models\RelUsuarioCuestionario;
 use app\models\EntRespuestas;
 use app\models\RelUsuarioRespuesta;
+use app\models\RelCuestionarioArea;
 
 class SiteController extends Controller
 {
@@ -105,19 +106,22 @@ class SiteController extends Controller
         $usuario = Yii::$app->user->identity;
         $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
 
+        $relUsuarioArea = RelUsuarioArea::find()->where(['id_usuario'=>$usuarioCuestionario->id_usuario])->one();
+        $arrayRelCuestionarioArea = RelCuestionarioArea::find()->where(['id_area'=>$relUsuarioArea->id_area])->select('id_cuestionario');
+
         $relUsuarioCuest = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->andWhere(['id_usuario_calificado'=>$usuarioCuestionario->id_usuario])->one();
-        //var_dump($relUsuarioCuest);exit;
         if($relUsuarioCuest == null){
-            $cuestionario = EntCuestionario::find()->where(['id_area'=>$usuarioCuestionario->id_area])->one();
+            $cuestionario = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->one();
             
             $relUsuarioCuest = new RelUsuarioCuestionario;
             $relUsuarioCuest->id_usuario = $usuario->id_usuario;
             $relUsuarioCuest->id_usuario_calificado = $usuarioCuestionario->id_usuario;
-            $relUsuarioCuest->id_cuestionario = $cuestionario->id_cuestionario;
+            //$relUsuarioCuest->id_cuestionario = $cuestionario->id_cuestionario;
             $relUsuarioCuest->id_evaluacion = $cuestionario->id_evaluacion;
 
             $relUsuarioCuest->save();
         }
+
         $relUserResp = RelUsuarioRespuesta::find()->where(['id_usuario_cuestionario'=>$relUsuarioCuest->id_usuario_cuestionario])->select('id_respuesta');
         $preguntasContestadas = [];
         if($relUserResp){
@@ -125,12 +129,13 @@ class SiteController extends Controller
                 'in', 'id_respuesta', $relUserResp,
             ])->select('id_pregunta');
         }
-        $cuestionario = EntCuestionario::find()->where(['id_area'=>$usuarioCuestionario->id_area])->one();    
-        $pregunta = EntPreguntas::find()->where(['id_cuestionario'=>$cuestionario->id_cuestionario])->andWhere([ 
+
+        $arrayCuestionario = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->select('id_cuestionario');
+        $pregunta = EntPreguntas::find()->where(['in', 'id_cuestionario', $arrayCuestionario])->andWhere([ 
             'not in',
             'id_pregunta',
             $preguntasContestadas 
-        ])->orderBy('id_pregunta')->one(); 
+        ])->orderBy('id_pregunta')->one();
         
         if(isset($_POST['respuesta'])){
             $respuesta = new EntRespuestas;

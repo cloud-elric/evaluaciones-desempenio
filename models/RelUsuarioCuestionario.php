@@ -11,12 +11,10 @@ use app\modules\ModUsuarios\models\EntUsuarios;
  * @property string $id_usuario_cuestionario
  * @property string $id_usuario
  * @property string $id_usuario_calificado
- * @property string $id_cuestionario
  * @property string $id_evaluacion
  * @property string $b_completado
  * @property string $fch_creacion
  *
- * @property EntCuestionario $idCuestionario
  * @property ModUsuariosEntUsuarios $idUsuario
  * @property EntEvaluaciones $idEvaluacion
  * @property ModUsuariosEntUsuarios $idUsuarioCalificado
@@ -38,10 +36,9 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_usuario', 'id_usuario_calificado', 'id_cuestionario', 'id_evaluacion'], 'required'],
-            [['id_usuario', 'id_usuario_calificado', 'id_cuestionario', 'id_evaluacion', 'b_completado'], 'integer'],
+            [['id_usuario', 'id_usuario_calificado', 'id_evaluacion'], 'required'],
+            [['id_usuario', 'id_usuario_calificado', 'id_evaluacion', 'b_completado'], 'integer'],
             [['fch_creacion'], 'safe'],
-            [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
             [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
             [['id_evaluacion'], 'exist', 'skipOnError' => true, 'targetClass' => EntEvaluaciones::className(), 'targetAttribute' => ['id_evaluacion' => 'id_evaluacion']],
             [['id_usuario_calificado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_calificado' => 'id_usuario']],
@@ -57,19 +54,10 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
             'id_usuario_cuestionario' => 'Id Usuario Cuestionario',
             'id_usuario' => 'Id Usuario',
             'id_usuario_calificado' => 'Id Usuario Calificado',
-            'id_cuestionario' => 'Id Cuestionario',
             'id_evaluacion' => 'Id Evaluacion',
             'b_completado' => 'B Completado',
             'fch_creacion' => 'Fch Creacion',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getIdCuestionario()
-    {
-        return $this->hasOne(EntCuestionario::className(), ['id_cuestionario' => 'id_cuestionario']);
     }
 
     /**
