@@ -102,6 +102,22 @@ class SiteController extends Controller
         }
     }
 
+    public function actionPreguntasUsuario2($token = null){
+        $usuario = Yii::$app->user->identity;
+        $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
+
+        $relUsuarioArea = RelUsuarioArea::find()->where(['id_usuario'=>$usuarioCuestionario->id_usuario])->one();
+        $arrayRelCuestionarioArea = RelCuestionarioArea::find()->where(['id_area'=>$relUsuarioArea->id_area])->select('id_cuestionario');
+
+        $cuestionarios = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->all();
+
+        return $this->render('vista-preguntas2',[
+            'usuario' => $usuario,
+            'usuarioCuestionario' => $usuarioCuestionario,
+            'cuestionarios' => $cuestionarios
+        ]); 
+    }
+
     public function actionPreguntasUsuario($token = null){
         $usuario = Yii::$app->user->identity;
         $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();

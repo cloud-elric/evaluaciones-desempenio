@@ -6,7 +6,7 @@ foreach($empleados as $empleado){
 ?>
     
         <div class="panel-body">
-            <h3><a href="<?= $link = Yii::$app->urlManager->createAbsoluteUrl(['site/preguntas-usuario?token=' . $empleado->txt_token])?>">
+            <h3><a href="<?= $link = Yii::$app->urlManager->createAbsoluteUrl(['site/preguntas-usuario2?token=' . $empleado->txt_token])?>">
                 <?= $empleado->txt_username. " " .$empleado->txt_apellido_paterno ?>
             </a></h3> 
         </div>   
