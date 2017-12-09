@@ -65,7 +65,7 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
      */
     public function getIdUsuario()
     {
-        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario']);
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario']);
     }
 
     /**
@@ -81,7 +81,7 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
      */
     public function getIdUsuarioCalificado()
     {
-        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario_calificado']);
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario_calificado']);
     }
 
     /**

@@ -18,6 +18,7 @@ use app\models\RelUsuarioCuestionario;
 use app\models\EntRespuestas;
 use app\models\RelUsuarioRespuesta;
 use app\models\RelCuestionarioArea;
+use app\modules\ModUsuarios\models\Utils;
 
 class SiteController extends Controller
 {
@@ -90,16 +91,15 @@ class SiteController extends Controller
     }
 
     public function actionEvaluacion(){
+        
         $usuario = Yii::$app->user->identity;
-        $empleados = EntUsuarios::find()->where(['id_area'=>$usuario->id_area])->all();
-        $empleadosOtros = EntUsuarios::find()->where(['!=', 'id_area', $usuario->id_area])->all();
+       
+        $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->all();
 
-        if($empleados && $empleadosOtros){
-            return $this->render('vista-empleados',[
-                'empleados' => $empleados,
-                'empleadosOtros' => $empleadosOtros
-            ]);
-        }
+        return $this->render('vista-empleados',[
+            'usuariosCalificar' => $usuariosCalificar,
+        ]);
+        
     }
 
     public function actionPreguntasUsuario2($token = null){
@@ -120,58 +120,25 @@ class SiteController extends Controller
 
     public function actionPreguntasUsuario($token = null){
         $usuario = Yii::$app->user->identity;
-        $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
+        $usuarioAEvaluar =  EntUsuarios::find()->where(['txt_token'=>$token])->one();
 
-        $relUsuarioArea = RelUsuarioArea::find()->where(['id_usuario'=>$usuarioCuestionario->id_usuario])->one();
-        $arrayRelCuestionarioArea = RelCuestionarioArea::find()->where(['id_area'=>$relUsuarioArea->id_area])->select('id_cuestionario');
+        $cuestionariosEvaluados = [];
+        $cuestionariosCompletos = EntRespuestas::find()
+            ->where(['id_usuario'=>$usuario->id_usuario])
+            ->andWhere(['id_usuario_evaluado'=>$usuarioAEvaluar->id_usuario])->all();
 
-        $relUsuarioCuest = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->andWhere(['id_usuario_calificado'=>$usuarioCuestionario->id_usuario])->one();
-        if($relUsuarioCuest == null){
-            $cuestionario = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->one();
-            
-            $relUsuarioCuest = new RelUsuarioCuestionario;
-            $relUsuarioCuest->id_usuario = $usuario->id_usuario;
-            $relUsuarioCuest->id_usuario_calificado = $usuarioCuestionario->id_usuario;
-            //$relUsuarioCuest->id_cuestionario = $cuestionario->id_cuestionario;
-            $relUsuarioCuest->id_evaluacion = $cuestionario->id_evaluacion;
+        foreach($cuestionariosCompletos as $cuestionario){
+            $cuestionariosEvaluados[] = $cuestionario->id_cuestionario;
 
-            $relUsuarioCuest->save();
-        }
-
-        $relUserResp = RelUsuarioRespuesta::find()->where(['id_usuario_cuestionario'=>$relUsuarioCuest->id_usuario_cuestionario])->select('id_respuesta');
-        $preguntasContestadas = [];
-        if($relUserResp){
-            $preguntasContestadas = EntRespuestas::find()->where([ 
-                'in', 'id_respuesta', $relUserResp,
-            ])->select('id_pregunta');
-        }
-
-        $arrayCuestionario = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->select('id_cuestionario');
-        $pregunta = EntPreguntas::find()->where(['in', 'id_cuestionario', $arrayCuestionario])->andWhere([ 
-            'not in',
-            'id_pregunta',
-            $preguntasContestadas 
-        ])->orderBy('id_pregunta')->one();
+        }    
+        $cuestionarios = RelCuestionarioArea::find()
+                            ->where(['id_area'=>$usuarioAEvaluar->id_area])
+                            ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
+                            ->all();
         
-        if(isset($_POST['respuesta'])){
-            $respuesta = new EntRespuestas;
-            $respuesta->id_pregunta = $pregunta->id_pregunta;
-            $respuesta->save();
-
-            $nuevaRelUserResp = new RelUsuarioRespuesta;
-            $nuevaRelUserResp->id_usuario_cuestionario = $relUsuarioCuest->id_usuario_cuestionario;
-            $nuevaRelUserResp->id_respuesta = $respuesta->id_respuesta;
-            $nuevaRelUserResp->id_respuesta = $respuesta->id_respuesta;
-            $nuevaRelUserResp->txt_valor = $_POST['respuesta'];
-            $nuevaRelUserResp->save();
-            
-            return $this->redirect(['preguntas-usuario?token='.$usuarioCuestionario->txt_token]);
-        }
-
         return $this->render('vista-preguntas',[
-            'usuario' => $usuario,
-            'usuarioCuestionario' => $usuarioCuestionario,
-            'pregunta' => $pregunta
+            'cuestionarios' => $cuestionarios,
+            'eva'=>$token
         ]); 
     }
 
@@ -231,35 +198,60 @@ class SiteController extends Controller
         return $this->renderAjax('about');
     }
 
-    public function actionGetcontrollersandactions()
-    {
-        $controllerlist = [];
-        if ($handle = opendir('../controllers')) {
-            while (false !== ($file = readdir($handle))) {
-                if ($file != "." && $file != ".." && substr($file, strrpos($file, '.') - 10) == 'Controller.php') {
-                    $controllerlist[] = $file;
-                }
-            }
-            closedir($handle);
-        }
-        asort($controllerlist);
-        $fulllist = [];
-        foreach ($controllerlist as $controller):
-            $handle = fopen('../controllers/' . $controller, "r");
-            if ($handle) {
-                while (($line = fgets($handle)) !== false) {
-                    if (preg_match('/public function action(.*?)\(/', $line, $display)):
-                        if (strlen($display[1]) > 2):
-                            $fulllist[strtolower(substr($controller, 0, -14))][] = strtolower($display[1]);
-                        endif;
-                    endif;
-                }
-            }
-            fclose($handle);
-        endforeach;
+    public function actionGuardarPreguntasCuestionario($token = null, $eva=null){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $response['status'] = 'error';
+        $response['message'] = 'Ocurrio un problema al guardar';
+        $cuestionario = EntCuestionario::find()->where(["id_cuestionario"=>$token])->one();
+        $usuarioEvaluar = EntUsuarios::find()->where(['txt_token'=>$eva])->one();
+        $usuario = Yii::$app->user->identity;
 
-        print_r($fulllist);
-        exit;
-        return $fulllist;
+        $respuesta = new EntRespuestas();
+        $respuesta->id_cuestionario = $cuestionario->id_cuestionario;
+        $respuesta->id_usuario_evaluado = $usuarioEvaluar->id_usuario;
+        $respuesta->fch_creacion = Utils::getFechaActual();
+        $respuesta->id_usuario = $usuario->id_usuario;
+        $transaction = EntRespuestas::getDb()->beginTransaction();
+        $error = false;
+        $errores = [];
+        try{
+            if($respuesta->save()){
+
+
+                foreach($_POST['respuesta'] as $index=>$value){
+                    $respuestasUsuarios = new RelUsuarioRespuesta();
+                    $respuestasUsuarios->id_respuesta = $respuesta->id_respuesta;
+                    $respuestasUsuarios->id_pregunta = $index;
+                    $respuestasUsuarios->txt_valor = $value;
+                    
+                    if(!$respuestasUsuarios->save()){
+                        $error = true;
+                        $errores = $respuestasUsuarios->errors;
+                    }
+                }
+
+                if($error){
+                    $response['message'] = 'No se pudo guardar alguna pregunta';
+                    $response['errors'] = $errores;
+                }else{
+                    $transaction->commit();
+                    $response['status'] = 'success';
+                    $response['message'] = 'Cuestionario guardado';
+                }
+
+            }else{
+                $transaction->rollBack();
+            }
+
+
+        }catch(\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch(\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+        
+        return $response;
     }
 }

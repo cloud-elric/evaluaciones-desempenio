@@ -42,7 +42,7 @@ use \yii\helpers\Url;
             //if(\Yii::$app->user->can(Yii::$app->params ['roles'] ['ejecutivoTelcel'])){
             ?>
             <li class="site-menu-category">Call center</li>
-            <li class="dropdown site-menu-item has-sub">
+            <!-- <li class="dropdown site-menu-item has-sub">
                 <a class="dropdown-toggle" href="javascript:void(0)" data-dropdown-toggle="false">
                     <i class="site-menu-icon wb-calendar" aria-hidden="true"></i>
                     <span class="site-menu-title">Citas</span>
@@ -71,7 +71,7 @@ use \yii\helpers\Url;
                         </div>
                     </div>
                 </div>
-            </li>  
+            </li>   -->
         </ul>
        
         </div>
