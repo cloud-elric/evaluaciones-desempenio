@@ -148,4 +148,11 @@ table a.btn {
     text-decoration: none;
 }
 
+.panel-heading {
+    padding: 10px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
 

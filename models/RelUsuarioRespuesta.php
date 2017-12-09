@@ -8,11 +8,11 @@ use Yii;
  * This is the model class for table "rel_usuario_respuesta".
  *
  * @property string $id_usuario_respuesta
- * @property string $id_usuario_cuestionario
  * @property string $id_respuesta
+ * @property string $id_pregunta
  * @property string $txt_valor
  *
- * @property RelUsuarioCuestionario $idUsuarioCuestionario
+ * @property EntPreguntas $idPregunta
  * @property EntRespuestas $idRespuesta
  */
 class RelUsuarioRespuesta extends \yii\db\ActiveRecord
@@ -31,10 +31,10 @@ class RelUsuarioRespuesta extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_usuario_cuestionario', 'id_respuesta', 'txt_valor'], 'required'],
-            [['id_usuario_cuestionario', 'id_respuesta'], 'integer'],
+            [['id_respuesta', 'id_pregunta', 'txt_valor'], 'required'],
+            [['id_respuesta', 'id_pregunta'], 'integer'],
             [['txt_valor'], 'string'],
-            [['id_usuario_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => RelUsuarioCuestionario::className(), 'targetAttribute' => ['id_usuario_cuestionario' => 'id_usuario_cuestionario']],
+            [['id_pregunta'], 'exist', 'skipOnError' => true, 'targetClass' => EntPreguntas::className(), 'targetAttribute' => ['id_pregunta' => 'id_pregunta']],
             [['id_respuesta'], 'exist', 'skipOnError' => true, 'targetClass' => EntRespuestas::className(), 'targetAttribute' => ['id_respuesta' => 'id_respuesta']],
         ];
     }
@@ -46,8 +46,8 @@ class RelUsuarioRespuesta extends \yii\db\ActiveRecord
     {
         return [
             'id_usuario_respuesta' => 'Id Usuario Respuesta',
-            'id_usuario_cuestionario' => 'Id Usuario Cuestionario',
             'id_respuesta' => 'Id Respuesta',
+            'id_pregunta' => 'Id Pregunta',
             'txt_valor' => 'Txt Valor',
         ];
     }
@@ -55,9 +55,9 @@ class RelUsuarioRespuesta extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdUsuarioCuestionario()
+    public function getIdPregunta()
     {
-        return $this->hasOne(RelUsuarioCuestionario::className(), ['id_usuario_cuestionario' => 'id_usuario_cuestionario']);
+        return $this->hasOne(EntPreguntas::className(), ['id_pregunta' => 'id_pregunta']);
     }
 
     /**

@@ -3,15 +3,20 @@
 namespace app\models;
 
 use Yii;
+use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "ent_respuestas".
  *
  * @property string $id_respuesta
- * @property string $id_pregunta
+ * @property string $id_cuestionario
+ * @property string $id_usuario
+ * @property string $id_usuario_evaluado
  * @property string $fch_creacion
  *
- * @property EntPreguntas $idPregunta
+ * @property EntCuestionario $idCuestionario
+ * @property ModUsuariosEntUsuarios $idUsuario
+ * @property ModUsuariosEntUsuarios $idUsuarioEvaluado
  * @property RelUsuarioRespuesta[] $relUsuarioRespuestas
  */
 class EntRespuestas extends \yii\db\ActiveRecord
@@ -30,10 +35,12 @@ class EntRespuestas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_pregunta'], 'required'],
-            [['id_pregunta'], 'integer'],
+            [['id_cuestionario', 'id_usuario', 'id_usuario_evaluado'], 'required'],
+            [['id_cuestionario', 'id_usuario', 'id_usuario_evaluado'], 'integer'],
             [['fch_creacion'], 'safe'],
-            [['id_pregunta'], 'exist', 'skipOnError' => true, 'targetClass' => EntPreguntas::className(), 'targetAttribute' => ['id_pregunta' => 'id_pregunta']],
+            [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario_evaluado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_evaluado' => 'id_usuario']],
         ];
     }
 
@@ -44,7 +51,9 @@ class EntRespuestas extends \yii\db\ActiveRecord
     {
         return [
             'id_respuesta' => 'Id Respuesta',
-            'id_pregunta' => 'Id Pregunta',
+            'id_cuestionario' => 'Id Cuestionario',
+            'id_usuario' => 'Id Usuario',
+            'id_usuario_evaluado' => 'Id Usuario Evaluado',
             'fch_creacion' => 'Fch Creacion',
         ];
     }
@@ -52,9 +61,25 @@ class EntRespuestas extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getIdPregunta()
+    public function getIdCuestionario()
     {
-        return $this->hasOne(EntPreguntas::className(), ['id_pregunta' => 'id_pregunta']);
+        return $this->hasOne(EntCuestionario::className(), ['id_cuestionario' => 'id_cuestionario']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdUsuario()
+    {
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdUsuarioEvaluado()
+    {
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario_evaluado']);
     }
 
     /**
