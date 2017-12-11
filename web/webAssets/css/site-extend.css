@@ -155,4 +155,11 @@ table a.btn {
     border-top-right-radius: 3px;
 }
 
+blockquote.error{
+    color:red;
+}
+
+blockquote.success{
+    color: #46be8a;
+}
 

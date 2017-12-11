@@ -25,7 +25,7 @@ $(document).ready(function() {
       //   // l.stop();
       // });
   
-      Ladda.bind( '.ladda-button' );
+      //Ladda.bind( '.ladda-button' );
   
       $('#form-ajax').on('ajaxComplete', function (e, jqXHR, textStatus) {
         var l = Ladda.create($("#form-ajax button[type=submit]").get(0));

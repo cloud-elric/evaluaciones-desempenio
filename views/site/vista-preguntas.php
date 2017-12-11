@@ -3,7 +3,7 @@ use yii\helpers\Html;
 use yii\web\View;
 use yii\helpers\Url;
 
-$this->title = "Cuestionarios";
+$this->title = "Evaluación de competencias";
 
 $this->registerJsFile(
     '@web/webAssets/js/rating.js',
