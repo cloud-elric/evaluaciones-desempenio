@@ -19,6 +19,7 @@ use app\models\EntRespuestas;
 use app\models\RelUsuarioRespuesta;
 use app\models\RelCuestionarioArea;
 use app\modules\ModUsuarios\models\Utils;
+use app\models\CatAreas;
 
 class SiteController extends Controller
 {
@@ -30,10 +31,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControlExtend::className(),
-                'only' => ['index', 'evaluacion', 'preguntas-usuario'],
+                'only' => ['index', 'evaluacion', 'preguntas-usuario', 'niveles'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'evaluacion', 'preguntas-usuario'],
+                        'actions' => ['index', 'evaluacion', 'preguntas-usuario', 'niveles'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -92,7 +93,12 @@ class SiteController extends Controller
 
     public function actionEvaluacion(){
         
-        $usuario = Yii::$app->user->identity;
+        $usuario = Yii::$app->user->identity; 
+        if($usuario->txt_auth_item == "admin"/*Yii::$app->user->can('admin')*/) {
+            $niveles = CatAreas::find()->all();
+
+            return $this->render('vista-admin');
+        }     
        
         $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->all();
 
@@ -140,6 +146,14 @@ class SiteController extends Controller
             'cuestionarios' => $cuestionarios,
             'eva'=>$token
         ]); 
+    }
+
+    public function actionNiveles(){
+        $niveles = CatAreas::find()->all();
+
+        return $this->render('vista-niveles',[
+            'niveles' => $niveles
+        ]);
     }
 
     /**
@@ -211,6 +225,7 @@ class SiteController extends Controller
         $respuesta->id_usuario_evaluado = $usuarioEvaluar->id_usuario;
         $respuesta->fch_creacion = Utils::getFechaActual();
         $respuesta->id_usuario = $usuario->id_usuario;
+        $respuesta->id_area = $usuarioEvaluar->id_area;
         $transaction = EntRespuestas::getDb()->beginTransaction();
         $error = false;
         $errores = [];
