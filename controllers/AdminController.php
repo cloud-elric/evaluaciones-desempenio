@@ -65,6 +65,7 @@ class AdminController extends Controller
             $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
         }
         
+        \Yii::$app->getSession()->setFlash('success', 'Emails enviados correctamente');
         return $this->render("index");
         
     }
