@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controllers;
 
 use Yii;
@@ -38,7 +37,7 @@ class SiteController extends Controller
                         'allow' => true,
                         'roles' => ['@'],
                     ],
-                
+
                 ],
             ],
             // 'verbs' => [
@@ -66,7 +65,8 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionTest($token = null){
+    public function actionTest($token = null)
+    {
         //$auth = Yii::$app->authManager;
     
         //  // add "updatePost" permission
@@ -79,82 +79,86 @@ class SiteController extends Controller
          //$auth->add($admin);
         // $auth->addChild($admin, $updatePost);
 
-        $usuario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
-        if($usuario){
-            if (Yii::$app->getUser ()->login ( $usuario )) {
+        $usuario = EntUsuarios::find()->where(['txt_token' => $token])->one();
+        if ($usuario) {
+            if (Yii::$app->getUser()->login($usuario)) {
                 //return $this->goHome ();
                 return $this->redirect('evaluacion');
             }
-        }else{
+        } else {
             echo "Token invalido";
             //$this->render();
         }
     }
 
-    public function actionEvaluacion(){
-        
-        $usuario = Yii::$app->user->identity; 
-        if($usuario->txt_auth_item == "admin"/*Yii::$app->user->can('admin')*/) {
+    public function actionEvaluacion()
+    {
+
+        $usuario = Yii::$app->user->identity;
+        if ($usuario->txt_auth_item == "admin"/*Yii::$app->user->can('admin')*/ ) {
             $niveles = CatAreas::find()->all();
 
             return $this->render('vista-admin');
-        }     
-       
-        $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario'=>$usuario->id_usuario])->all();
+        }
 
-        return $this->render('vista-empleados',[
+        $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario' => $usuario->id_usuario])->all();
+
+        return $this->render('vista-empleados', [
             'usuariosCalificar' => $usuariosCalificar,
         ]);
-        
+
     }
 
-    public function actionPreguntasUsuario2($token = null){
+    public function actionPreguntasUsuario2($token = null)
+    {
         $usuario = Yii::$app->user->identity;
-        $usuarioCuestionario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
+        $usuarioCuestionario = EntUsuarios::find()->where(['txt_token' => $token])->one();
 
-        $relUsuarioArea = RelUsuarioArea::find()->where(['id_usuario'=>$usuarioCuestionario->id_usuario])->one();
-        $arrayRelCuestionarioArea = RelCuestionarioArea::find()->where(['id_area'=>$relUsuarioArea->id_area])->select('id_cuestionario');
+        $relUsuarioArea = RelUsuarioArea::find()->where(['id_usuario' => $usuarioCuestionario->id_usuario])->one();
+        $arrayRelCuestionarioArea = RelCuestionarioArea::find()->where(['id_area' => $relUsuarioArea->id_area])->select('id_cuestionario');
 
         $cuestionarios = EntCuestionario::find()->where(['in', 'id_cuestionario', $arrayRelCuestionarioArea])->all();
 
-        return $this->render('vista-preguntas2',[
+        return $this->render('vista-preguntas2', [
             'usuario' => $usuario,
             'usuarioCuestionario' => $usuarioCuestionario,
             'cuestionarios' => $cuestionarios
-        ]); 
+        ]);
     }
 
-    public function actionPreguntasUsuario($token = null){
+    public function actionPreguntasUsuario($token = null)
+    {
         $usuario = Yii::$app->user->identity;
-        $usuarioAEvaluar =  EntUsuarios::find()->where(['txt_token'=>$token])->one();
+        $usuarioAEvaluar = EntUsuarios::find()->where(['txt_token' => $token])->one();
 
         $cuestionariosEvaluados = [];
         $cuestionariosCompletos = EntRespuestas::find()
-            ->where(['id_usuario'=>$usuario->id_usuario])
-            ->andWhere(['id_usuario_evaluado'=>$usuarioAEvaluar->id_usuario])->all();
+            ->where(['id_usuario' => $usuario->id_usuario])
+            ->andWhere(['id_usuario_evaluado' => $usuarioAEvaluar->id_usuario])->all();
 
-        foreach($cuestionariosCompletos as $cuestionario){
+        foreach ($cuestionariosCompletos as $cuestionario) {
             $cuestionariosEvaluados[] = $cuestionario->id_cuestionario;
 
-        }    
+        }
         $cuestionarios = RelCuestionarioArea::find()
-                            ->where(['id_area'=>$usuarioAEvaluar->id_area])
-                            ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
-                            ->all();
-        
-        return $this->render('vista-preguntas',[
+            ->where(['id_area' => $usuarioAEvaluar->id_area])
+            ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
+            ->all();
+
+        return $this->render('vista-preguntas', [
             'cuestionarios' => $cuestionarios,
-            'eva'=>$token
-        ]); 
-    }
-
-    public function actionNiveles(){
-        $niveles = CatAreas::find()->all();
-
-        return $this->render('vista-niveles',[
-            'niveles' => $niveles
+            'eva' => $token
         ]);
     }
+
+    /*public function actionNiveles()
+    {
+        $niveles = CatAreas::find()->all();
+
+        return $this->render('vista-niveles', [
+            'niveles' => $niveles
+        ]);
+    }*/
 
     /**
      * Displays homepage.
@@ -168,7 +172,7 @@ class SiteController extends Controller
         // $auth = \Yii::$app->authManager;
         // $authorRole = $auth->getRole('test');
         // $auth->assign($authorRole, $usuario->getId());
-        
+
         return $this->render('index');
     }
 
@@ -212,12 +216,13 @@ class SiteController extends Controller
         return $this->renderAjax('about');
     }
 
-    public function actionGuardarPreguntasCuestionario($token = null, $eva=null){
+    public function actionGuardarPreguntasCuestionario($token = null, $eva = null)
+    {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $response['status'] = 'error';
         $response['message'] = 'Ocurrio un problema al guardar';
-        $cuestionario = EntCuestionario::find()->where(["id_cuestionario"=>$token])->one();
-        $usuarioEvaluar = EntUsuarios::find()->where(['txt_token'=>$eva])->one();
+        $cuestionario = EntCuestionario::find()->where(["id_cuestionario" => $token])->one();
+        $usuarioEvaluar = EntUsuarios::find()->where(['txt_token' => $eva])->one();
         $usuario = Yii::$app->user->identity;
 
         $respuesta = new EntRespuestas();
@@ -229,44 +234,150 @@ class SiteController extends Controller
         $transaction = EntRespuestas::getDb()->beginTransaction();
         $error = false;
         $errores = [];
-        try{
-            if($respuesta->save()){
+        try {
+            if ($respuesta->save()) {
 
 
-                foreach($_POST['respuesta'] as $index=>$value){
+                foreach ($_POST['respuesta'] as $index => $value) {
                     $respuestasUsuarios = new RelUsuarioRespuesta();
                     $respuestasUsuarios->id_respuesta = $respuesta->id_respuesta;
                     $respuestasUsuarios->id_pregunta = $index;
                     $respuestasUsuarios->txt_valor = $value;
-                    
-                    if(!$respuestasUsuarios->save()){
+
+                    if (!$respuestasUsuarios->save()) {
                         $error = true;
                         $errores = $respuestasUsuarios->errors;
                     }
                 }
 
-                if($error){
+                if ($error) {
                     $response['message'] = 'No se pudo guardar alguna pregunta';
                     $response['errors'] = $errores;
-                }else{
+                } else {
                     $transaction->commit();
                     $response['status'] = 'success';
                     $response['message'] = 'Cuestionario guardado';
                 }
 
-            }else{
+            } else {
                 $transaction->rollBack();
             }
 
 
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             $transaction->rollBack();
             throw $e;
         }
-        
+
         return $response;
+    }
+
+    public function actionPrueba(){
+        $areas = CatAreas::find()->all();
+        $datos = [];
+        foreach ($areas as $area){
+            $datos[$area->id_area]['nombreArea'] = $area->txt_nombre;
+            //$datos[$area->id_area]['nombreCuestionario']['resultados'] = null;                            
+            for ($index = 1; $index <= 5; $index++){
+                $datos[$area->id_area]['resultados'][$index] = 0;                                
+            }
+            //$respuestas = $area->entRespuestas;
+            $relCuestionariosArea = RelCuestionarioArea::find()->where(['id_area'=>$area->id_area])->all();
+            foreach($relCuestionariosArea as $relCuestionarioArea){
+                $cuestionario =$relCuestionarioArea->idCuestionario;
+                $datos[$area->id_area]['resultados']['nombreCuestionario'] = $cuestionario->id_cuestionario;
+                $respuestas = $area->getEntRespuestasByCuestionario($cuestionario->id_cuestionario);
+                foreach ($respuestas as $respuesta) {
+                    $respuestaValores = $respuesta->relUsuarioRespuestas;
+                    foreach ($respuestaValores as $respuestaValor){
+                        switch ($respuestaValor->txt_valor){
+                            case '1':
+                                # code...
+                                $datos[$area->id_area]['resultados'][$respuestaValor->txt_valor] += 1;
+                                break;
+                            case '2':
+                                # code...
+                                $datos[$area->id_area]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '3':
+                                # code...
+                                $datos[$area->id_area]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '4':
+                                # code...
+                                $datos[$area->id_area]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '5':
+                                # code...
+                                $datos[$area->id_area]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        print_r($datos);
+    }
+
+    public function actionNiveles(){
+        $areas = CatAreas::find()->all();
+        $datos = [];
+        foreach ($areas as $area){
+            $datos[$area->id_area]['nombreArea'] = $area->txt_nombre;
+            //$datos[$area->id_area]['nombreCuestionario']['resultados'] = null;                            
+            
+            //$respuestas = $area->entRespuestas;
+            $relCuestionariosArea = RelCuestionarioArea::find()->where(['id_area'=>$area->id_area])->all();
+            foreach($relCuestionariosArea as $relCuestionarioArea){
+                $cuestionario =$relCuestionarioArea->idCuestionario;
+
+                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario] = ['resultados' => null ];
+                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['nombre'] = $cuestionario->txt_nombre;
+                for ($index = 1; $index <= 5; $index++){
+                    $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$index] = 0;                                
+                }
+                $respuestas = $area->getEntRespuestasByCuestionario($relCuestionarioArea->id_cuestionario);
+                foreach ($respuestas as $respuesta){
+                    $respuestaValores = $respuesta->relUsuarioRespuestas;
+                    foreach ($respuestaValores as $respuestaValor){
+                        switch ($respuestaValor->txt_valor){
+                            case '1':
+                                # code...
+                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;
+                                break;
+                            case '2':
+                                # code...
+                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '3':
+                                # code...
+                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '4':
+                                # code...
+                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            case '5':
+                                # code...
+                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                                break;
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        return $this->render('vista-niveles2', [
+            'datos' => $datos
+        ]);
+        //print_r($datos);
     }
 }

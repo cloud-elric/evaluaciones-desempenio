@@ -9,6 +9,13 @@ use app\models\RelUsuarioRespuesta;
 set_time_limit(500);
 
 $this->title = "Vista por niveles";
+
+$valor1 = 0;
+$valor2 = 0;
+$valor3 = 0;
+$valor4 = 0;
+$valor5 = 0;
+$numEncuestados = 0;
 ?>
 
 <div class="container">
@@ -37,29 +44,49 @@ $this->title = "Vista por niveles";
                     foreach($respuestas as $respuesta){
                         $usuario = $respuesta->idUsuarioEvaluado;
                         if($usuario->id_area == $nivel->id_area){
+                            $numEncuestados = $numEncuestados + 1;
                             $respuestasUsuario = $respuesta->relUsuarioRespuestas;
                             foreach($respuestasUsuario as $respuestaUsuario){
                                 $pregunta = $respuestaUsuario->idPregunta;
                                 if($pregunta->idCuestionario->id_cuestionario == $competencia->id_cuestionario){
-                ?>
-                                    <div id="ct-chart-<?= $respuestaUsuario->id_pregunta ?>"></div>
-                                    <script>
-                                        new Chartist.Bar('#ct-chart-<?= $respuestaUsuario->id_pregunta ?>', {
-                                            labels: ['<?= $respuestaUsuario->id_pregunta ?>'],
-                                            series: [
-                                                [<?= $respuestaUsuario->txt_valor ?>]
-                                            ]
-                                        },{
-                                            width: 320,
-                                            height: 70,
-                                            horizontalBars: true
-                                        });
-                                    </script>
-                <?php
+                                    if($respuestaUsuario->txt_valor == '1'){
+                                        $valor1 = $valor1 + 1;
+                                    }else if($respuestaUsuario->txt_valor == '2'){
+                                        $valor2 = $valor2 + 1;                                        
+                                    }else if($respuestaUsuario->txt_valor == '3'){
+                                        $valor3 = $valor3 + 1;                                        
+                                    }else if($respuestaUsuario->txt_valor == '4'){
+                                        $valor4 = $valor4 + 1;                                        
+                                    }else{
+                                        $valor5 = $valor5 + 1;                                        
+                                    }
                                 }
                             }
                         }
                     }
+                    $promedio1 = $valor1 / $numEncuestados;
+                    $promedio2 = $valor2 / $numEncuestados;
+                    $promedio3 = $valor3 / $numEncuestados;
+                    $promedio4 = $valor4 / $numEncuestados;
+                    $promedio5 = $valor5 / $numEncuestados;
+
+
+                ?>
+                    <div id="ct-chart-<?= $respuestaUsuario->id_pregunta ?>"></div>
+                    <script>
+                        new Chartist.Bar('#ct-chart-<?= $respuestaUsuario->id_pregunta ?>', {
+                            labels: ['1', '2', '3', '4', '5'],
+                            series: [
+                                [<?= $promedio1 ?>, <?= $promedio2 ?>, <?= $promedio3 ?>, <?= $promedio4 ?>, <?= $promedio5 ?>,]
+                            ]
+                        },{
+                            width: 320,
+                            height: 70,
+                            seriesBarDistance: 10,
+                            horizontalBars: true
+                        });
+                    </script>
+                <?php
                 }
                 ?>
             </div>
