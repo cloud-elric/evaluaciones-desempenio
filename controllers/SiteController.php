@@ -343,42 +343,94 @@ class SiteController extends Controller
                 for ($index = 1; $index <= 5; $index++){
                     $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$index] = 0;                                
                 }
-                $respuestas = $area->getEntRespuestasByCuestionario($relCuestionarioArea->id_cuestionario);
-                foreach ($respuestas as $respuesta){
-                    $respuestaValores = $respuesta->relUsuarioRespuestas;
-                    foreach ($respuestaValores as $respuestaValor){
-                        switch ($respuestaValor->txt_valor){
-                            case '1':
-                                # code...
-                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;
-                                break;
-                            case '2':
-                                # code...
-                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
-                                break;
-                            case '3':
-                                # code...
-                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
-                                break;
-                            case '4':
-                                # code...
-                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
-                                break;
-                            case '5':
-                                # code...
-                                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
-                                break;
-                            default:
-                                # code...
-                                break;
-                        }
-                    }
-                }
+                $respuestas = $area->getEntRespuestasByCuestionario($relCuestionarioArea->id_cuestionario);        
+                $datos = $this->arrayResultadosCuestionario($datos, $respuestas, $area, $cuestionario);
             }
         }
         return $this->render('vista-niveles2', [
             'datos' => $datos
         ]);
         //print_r($datos);
+    }
+
+    public function actionCompetencias(){
+        $cuestionarios = EntCuestionario::find()->all();
+        $datos = [];
+        foreach ($cuestionarios as $cuestionario){
+            $datos[$cuestionario->id_cuestionario]['nombreCompetencia'] = $cuestionario->txt_nombre;
+            $datos[$cuestionario->id_cuestionario]['cuestionario'] = ['resultados' => null ];
+            $datos[$cuestionario->id_cuestionario]['idCuestionario'] = $cuestionario->id_cuestionario;
+            for ($index = 1; $index <= 5; $index++){
+                $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$index] = 0;                                
+            }
+            $respuestas = EntRespuestas::find()->where(['id_cuestionario'=>$cuestionario->id_cuestionario])->all();
+            foreach ($respuestas as $respuesta){
+                $respuestaValores = $respuesta->relUsuarioRespuestas;
+                foreach ($respuestaValores as $respuestaValor){
+                    switch ($respuestaValor->txt_valor){
+                        case '1':
+                            # code...
+                            $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$respuestaValor->txt_valor] += 1;
+                            break;
+                        case '2':
+                            # code...
+                            $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$respuestaValor->txt_valor] += 1;                            
+                            break;
+                        case '3':
+                            # code...
+                            $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$respuestaValor->txt_valor] += 1;                            
+                            break;
+                        case '4':
+                            # code...
+                            $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$respuestaValor->txt_valor] += 1;                            
+                            break;
+                        case '5':
+                            # code...
+                            $datos[$cuestionario->id_cuestionario]['cuestionario']['resultados'][$respuestaValor->txt_valor] += 1;                            
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+            }
+        }//print_r($datos);exit;
+        return $this->render('vista-competencias', [
+            'datos' => $datos
+        ]);
+    }
+
+    public function arrayResultadosCuestionario($datos = [], $respuestas, $area, $cuestionario){
+        foreach ($respuestas as $respuesta){
+            $respuestaValores = $respuesta->relUsuarioRespuestas;
+            foreach ($respuestaValores as $respuestaValor){
+                switch ($respuestaValor->txt_valor){
+                    case '1':
+                        # code...
+                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;
+                        break;
+                    case '2':
+                        # code...
+                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        break;
+                    case '3':
+                        # code...
+                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        break;
+                    case '4':
+                        # code...
+                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        break;
+                    case '5':
+                        # code...
+                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+            }
+        }
+        return $datos;
     }
 }
