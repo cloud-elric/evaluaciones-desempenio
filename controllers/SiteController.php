@@ -339,6 +339,7 @@ class SiteController extends Controller
 
                 $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario] = ['resultados' => null ];
                 $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['nombre'] = $cuestionario->txt_nombre;
+                $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['idCuestionario'] = $cuestionario->id_cuestionario;
                 for ($index = 1; $index <= 5; $index++){
                     $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$index] = 0;                                
                 }

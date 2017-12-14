@@ -20,12 +20,28 @@ use app\models\EntCuestionario;
                 <?php
                 foreach($dato['cuestionario'] as $cuest){
                     echo "<h3>" . $cuest['nombre'] . "</h3>";
-
+                    $arrayDatos = [];
+                    $i=0;
                     foreach($cuest['resultados'] as $resultados){
-                ?>
-                        <p><?= $resultados ?></p>
-                <?php
+                        $arrayDatos[$i] = $resultados;
+                        $i++;
                     }
+                ?>
+                    <div id="chart-<?= $dato['nombreArea'] . "-" . $cuest['idCuestionario'] ?>"></div>
+                    <script>
+                        new Chartist.Bar('#chart-<?= $dato['nombreArea'] . "-" . $cuest['idCuestionario'] ?>', {
+                            labels: ['1', '2', '3', '4', '5'],
+                            series: [
+                                [<?php foreach($arrayDatos as $arr){ echo $arr.","; } ?>]
+                            ]
+                        },{
+                            width: 320,
+                            height: 250,
+                            seriesBarDistance: 10,
+                            horizontalBars: true
+                        });
+                    </script>
+                <?php
                 }
                 ?>
             </div>
@@ -34,17 +50,4 @@ use app\models\EntCuestionario;
         ?>
     </div>
 </div>
-<div id="ct-chart-<?= $respuestaUsuario->id_pregunta ?>"></div>
-                        <script>
-                            new Chartist.Bar('#ct-chart-<?= $respuestaUsuario->id_pregunta ?>', {
-                                labels: ['1', '2', '3', '4', '5'],
-                                series: [
-                                    [<?= $promedio1 ?>, <?= $promedio2 ?>, <?= $promedio3 ?>, <?= $promedio4 ?>, <?= $promedio5 ?>,]
-                                ]
-                            },{
-                                width: 320,
-                                height: 70,
-                                seriesBarDistance: 10,
-                                horizontalBars: true
-                            });
-                        </script>
+
