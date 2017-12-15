@@ -65,18 +65,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionTest($token = null){
-        //$auth = Yii::$app->authManager;
-    
-        //  // add "updatePost" permission
-        //  $updatePost = $auth->createPermission('about');
-        //  $updatePost->description = 'Update post';
-        //  $auth->add($updatePost);
-        //         // add "admin" role and give this role the "updatePost" permission
-        // // as well as the permissions of the "author" role
-        // $admin = $auth->createRole('test');
-         //$auth->add($admin);
-        // $auth->addChild($admin, $updatePost);
+    public function actionIniciarEvaluacion($token = null){
 
         $usuario = EntUsuarios::find()->where(['txt_token'=>$token])->one();
         if($usuario){
