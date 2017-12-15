@@ -6,12 +6,42 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use app\modules\ModUsuarios\models\EntUsuarios;
+use app\components\AccessControlExtend;
+use app\models\CatAreas;
 
 
 class AdminController extends Controller
 {
 
-    public function actionIndex(){
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControlExtend::className(),
+                'only' => ['index', 'send-email'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'send-email'],
+                        'allow' => true,
+                        'roles' => ['administrador'],
+                    ],
+
+                ],
+            ],
+            // 'verbs' => [
+            //     'class' => VerbFilter::className(),
+            //     'actions' => [
+            //         'logout' => ['post'],
+            //     ],
+            // ],
+        ];
+    }
+
+    public function actionIndex(){        
+        
 
         return $this->render("index");
     }
