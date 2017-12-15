@@ -65,7 +65,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionTest($token = null)
+    public function actionIniciarEvaluacion($token = null)
     {
         //$auth = Yii::$app->authManager;
     

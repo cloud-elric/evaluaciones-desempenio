@@ -89,14 +89,14 @@ class AdminController extends Controller
         
         foreach($users as $user){
             $url = Yii::$app->urlManager->createAbsoluteUrl ( [
-                'site/test?token='.$user->txt_token
+                'site/iniciar-evaluacion?token='.$user->txt_token
             ] );
             
             $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
         }
         
         \Yii::$app->getSession()->setFlash('success', 'Emails enviados correctamente');
-        return $this->render("index");
+        return $this->redirect(["admin/index"]);
         
     }
 
@@ -121,7 +121,7 @@ class AdminController extends Controller
         $server_output = curl_exec ( $ch );
         
         curl_close ( $ch );
-        echo $server_output;
+        //echo $server_output;
         // further processing ....
         if ($server_output == "OK") {
         } else {
@@ -146,7 +146,7 @@ class AdminController extends Controller
         $server_output = curl_exec ( $ch );
         
         curl_close ( $ch );
-        echo $server_output;
+        //echo $server_output;
         // further processing ....
         if ($server_output == "OK") {
         } else {
