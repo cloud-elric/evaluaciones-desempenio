@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "cat_areas".
@@ -14,7 +13,6 @@ use app\modules\ModUsuarios\models\EntUsuarios;
  *
  * @property EntRespuestas[] $entRespuestas
  * @property ModUsuariosEntUsuarios[] $modUsuariosEntUsuarios
- * @property RelCuestionarioArea[] $relCuestionarioAreas
  * @property RelUsuarioArea[] $relUsuarioAreas
  */
 class CatAreas extends \yii\db\ActiveRecord
@@ -59,25 +57,12 @@ class CatAreas extends \yii\db\ActiveRecord
         return $this->hasMany(EntRespuestas::className(), ['id_area' => 'id_area']);
     }
 
-    public function getEntRespuestasByCuestionario($idCuestionario)
-    {
-        return $this->hasMany(EntRespuestas::className(), ['id_area' => 'id_area'])->andWhere(['id_cuestionario'=>$idCuestionario])->all();
-    }
-
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getModUsuariosEntUsuarios()
     {
-        return $this->hasMany(EntUsuarios::className(), ['id_area' => 'id_area']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRelCuestionarioAreas()
-    {
-        return $this->hasMany(RelCuestionarioArea::className(), ['id_area' => 'id_area']);
+        return $this->hasMany(ModUsuariosEntUsuarios::className(), ['id_area' => 'id_area']);
     }
 
     /**

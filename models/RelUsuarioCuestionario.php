@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "rel_usuario_cuestionario".
@@ -18,7 +17,6 @@ use app\modules\ModUsuarios\models\EntUsuarios;
  * @property ModUsuariosEntUsuarios $idUsuario
  * @property EntEvaluaciones $idEvaluacion
  * @property ModUsuariosEntUsuarios $idUsuarioCalificado
- * @property RelUsuarioRespuesta[] $relUsuarioRespuestas
  */
 class RelUsuarioCuestionario extends \yii\db\ActiveRecord
 {
@@ -39,9 +37,9 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
             [['id_usuario', 'id_usuario_calificado', 'id_evaluacion'], 'required'],
             [['id_usuario', 'id_usuario_calificado', 'id_evaluacion', 'b_completado'], 'integer'],
             [['fch_creacion'], 'safe'],
-            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
             [['id_evaluacion'], 'exist', 'skipOnError' => true, 'targetClass' => EntEvaluaciones::className(), 'targetAttribute' => ['id_evaluacion' => 'id_evaluacion']],
-            [['id_usuario_calificado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_calificado' => 'id_usuario']],
+            [['id_usuario_calificado'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario_calificado' => 'id_usuario']],
         ];
     }
 
@@ -65,7 +63,7 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
      */
     public function getIdUsuario()
     {
-        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario']);
+        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario']);
     }
 
     /**
@@ -81,14 +79,6 @@ class RelUsuarioCuestionario extends \yii\db\ActiveRecord
      */
     public function getIdUsuarioCalificado()
     {
-        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario_calificado']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRelUsuarioRespuestas()
-    {
-        return $this->hasMany(RelUsuarioRespuesta::className(), ['id_usuario_cuestionario' => 'id_usuario_cuestionario']);
+        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario_calificado']);
     }
 }

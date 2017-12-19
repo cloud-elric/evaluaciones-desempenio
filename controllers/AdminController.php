@@ -8,11 +8,11 @@ use yii\web\Controller;
 use app\modules\ModUsuarios\models\EntUsuarios;
 use app\components\AccessControlExtend;
 use app\models\CatAreas;
+use yii\web\Response;
 
 
 class AdminController extends Controller
 {
-
     /**
      * @inheritdoc
      */
@@ -21,24 +21,19 @@ class AdminController extends Controller
         return [
             'access' => [
                 'class' => AccessControlExtend::className(),
-                'only' => ['index', 'send-email'],
+                'only' => ['index', 'send-email', 'reporte-por-niveles'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'send-email'],
+                        'actions' => ['index', 'send-email', 'reporte-por-niveles'],
                         'allow' => true,
                         'roles' => ['administrador'],
                     ],
 
                 ],
             ],
-            // 'verbs' => [
-            //     'class' => VerbFilter::className(),
-            //     'actions' => [
-            //         'logout' => ['post'],
-            //     ],
-            // ],
         ];
     }
+    
 
     public function actionIndex(){        
         
@@ -84,48 +79,20 @@ class AdminController extends Controller
     }
 
     public function actionSendEmail(){
-
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->all();
         
+        $respuesta['status'] = "success";
+        $respuesta['message'] = "Correos enviados correctamente";
         foreach($users as $user){
             $url = Yii::$app->urlManager->createAbsoluteUrl ( [
                 'site/iniciar-evaluacion?token='.$user->txt_token
             ] );
             
-            $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
+            #$this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
         }
-        
-        \Yii::$app->getSession()->setFlash('success', 'Emails enviados correctamente');
-        return $this->redirect(["admin/index"]);
-        
-    }
 
-    public function actionTest(){
-        $username = Yii::$app->params ['madMimi'] ['username'];
-        $apiKey = Yii::$app->params ['madMimi'] ['api_key'];
-        $promotionName= "Evaluaciones";
-        $name = "Alfredo";
-        $lastName = "Elizondo";
-        $email = "alfredo@2gom.com.mx";
-        
-        $string = Yii::$app->mailer->render('render/test', ['url' =>$url ], 'layouts/html.php');
-        
-        $ch = curl_init ();
-        
-        curl_setopt ( $ch, CURLOPT_URL, "https://api.madmimi.com/mailer" );
-        curl_setopt ( $ch, CURLOPT_POST, 1 );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, "username=".$username."&api_key=".$apiKey."&promotion_name=".$promotionName."&recipient=".$name." ".$lastName." <".$email.">&subject=Evaluación&from=development@2gom.com.mx&raw_html=".urlencode($string)  );
-        
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        
-        $server_output = curl_exec ( $ch );
-        
-        curl_close ( $ch );
-        //echo $server_output;
-        // further processing ....
-        if ($server_output == "OK") {
-        } else {
-        }
+        return $respuesta;
     }
 
     public function sendEmailMadMimi($url, $name, $lastName, $email){
@@ -151,6 +118,11 @@ class AdminController extends Controller
         if ($server_output == "OK") {
         } else {
         }
+    }
+
+    public function actionReportePorNiveles(){
+
+        return $this->render("reporte-por-niveles");
     }
 
 }

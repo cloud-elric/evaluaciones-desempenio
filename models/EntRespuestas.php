@@ -3,17 +3,20 @@
 namespace app\models;
 
 use Yii;
-use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "ent_respuestas".
  *
  * @property string $id_respuesta
  * @property string $id_cuestionario
+ * @property string $id_area
+ * @property string $id_nivel
  * @property string $id_usuario
  * @property string $id_usuario_evaluado
  * @property string $fch_creacion
  *
+ * @property CatAreas $idArea
+ * @property CatNiveles $idNivel
  * @property EntCuestionario $idCuestionario
  * @property ModUsuariosEntUsuarios $idUsuario
  * @property ModUsuariosEntUsuarios $idUsuarioEvaluado
@@ -35,12 +38,14 @@ class EntRespuestas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_cuestionario', 'id_usuario', 'id_usuario_evaluado'], 'required'],
-            [['id_cuestionario', 'id_usuario', 'id_usuario_evaluado'], 'integer'],
+            [['id_cuestionario', 'id_area', 'id_usuario', 'id_usuario_evaluado'], 'required'],
+            [['id_cuestionario', 'id_area', 'id_nivel', 'id_usuario', 'id_usuario_evaluado'], 'integer'],
             [['fch_creacion'], 'safe'],
+            [['id_area'], 'exist', 'skipOnError' => true, 'targetClass' => CatAreas::className(), 'targetAttribute' => ['id_area' => 'id_area']],
+            [['id_nivel'], 'exist', 'skipOnError' => true, 'targetClass' => CatNiveles::className(), 'targetAttribute' => ['id_nivel' => 'id_nivel']],
             [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
-            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
-            [['id_usuario_evaluado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_evaluado' => 'id_usuario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario_evaluado'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario_evaluado' => 'id_usuario']],
         ];
     }
 
@@ -52,10 +57,28 @@ class EntRespuestas extends \yii\db\ActiveRecord
         return [
             'id_respuesta' => 'Id Respuesta',
             'id_cuestionario' => 'Id Cuestionario',
+            'id_area' => 'Id Area',
+            'id_nivel' => 'Id Nivel',
             'id_usuario' => 'Id Usuario',
             'id_usuario_evaluado' => 'Id Usuario Evaluado',
             'fch_creacion' => 'Fch Creacion',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdArea()
+    {
+        return $this->hasOne(CatAreas::className(), ['id_area' => 'id_area']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdNivel()
+    {
+        return $this->hasOne(CatNiveles::className(), ['id_nivel' => 'id_nivel']);
     }
 
     /**
@@ -71,7 +94,7 @@ class EntRespuestas extends \yii\db\ActiveRecord
      */
     public function getIdUsuario()
     {
-        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario']);
+        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario']);
     }
 
     /**
@@ -79,7 +102,7 @@ class EntRespuestas extends \yii\db\ActiveRecord
      */
     public function getIdUsuarioEvaluado()
     {
-        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario_evaluado']);
+        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario_evaluado']);
     }
 
     /**

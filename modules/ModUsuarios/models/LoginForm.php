@@ -17,7 +17,17 @@ class LoginForm extends Model {
 	public $rememberMe = true;
 	public $userEncontrado;
 	private $_user = false;
-	public $token;
+
+	/**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Nombre de Usuario',
+            'password' => 'Contraseña'
+        ];
+    }
 	
 	/**
 	 *
@@ -114,28 +124,7 @@ class LoginForm extends Model {
 		}
 		return false;
 	}
-
-	public function loginByToken($token = null) {
-		if ($this->validate ()) {
-			return Yii::$app->user->login ( $this->getUserToken($token), $this->rememberMe ? 3600 * 24 * 30 : 0 );
-		}
-		return false;
-	}
 	
-	/**
-	 * Finds user by [[username]]
-	 *
-	 * @return User|null
-	 */
-	public function getUserToken($token) {
-		if ($this->_user === false) {
-			$this->_user = EntUsuarios::findByToken ( $token );
-			
-		}
-		
-		return $this->_user;
-	}
-
 	/**
 	 * Finds user by [[username]]
 	 *

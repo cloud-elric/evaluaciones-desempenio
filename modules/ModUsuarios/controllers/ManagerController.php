@@ -14,40 +14,16 @@ use app\modules\ModUsuarios\models\EntUsuariosFacebook;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use yii\filters\AccessControl;
+use app\components\AccessControlExtend;
 
 /**
  * Default controller for the `musuarios` module
  */
 class ManagerController extends Controller {
 
-	/**
-     * @inheritdoc
-     */
-     public function behaviors()
-     {
-         return [
-             'access' => [
-                 'class' => AccessControl::className(),
-                 'only' => ['profile'],
-                 'rules' => [
-                     [
-                         'actions' => ['profile'],
-                         'allow' => true,
-                         'roles' => ['@'],
-                     ],
-                   
-                 ],
-             ],
-            // 'verbs' => [
-            //     'class' => VerbFilter::className(),
-            //     'actions' => [
-            //         'logout' => ['post'],
-            //     ],
-            // ],
-        ];
-    }
+	
 
-	public $layout = "@app/views/layouts/mainBlank";
+	public $layout = "@app/views/layouts/classic/topBar/mainBlank";
 	
 	/**
 	 * Registrar usuario en la base de datos
@@ -195,6 +171,7 @@ class ManagerController extends Controller {
 	public function actionLogin() {
 
 		if (! Yii::$app->user->isGuest) {
+			
 			return $this->goHome ();
 		}
 
@@ -203,16 +180,43 @@ class ManagerController extends Controller {
 
 		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
 			Yii::$app->response->format = Response::FORMAT_JSON;
-			return ActiveForm::validate($model);
+			$validacion = ActiveForm::validate($model);
+			if(!$validacion){
+				if($model->login ()){
+					return $this->goHome ();
+				}
+			}else{
+				return $validacion;
+			}
+			
 		}
 
-		if ($model->load ( Yii::$app->request->post () ) && $model->login()) {
+		
+		if ($model->load ( Yii::$app->request->post () ) && $model->login ()) {
 			
-			return $this->goBack ();
+			return $this->goHome ();
 		}
 		return $this->render ( 'login', [ 
 				'model' => $model 
 		] );
+	}
+
+	public function actionLoginValidation(){
+		$model = new LoginForm ();
+		$model->scenario = 'login';
+
+		if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+			Yii::$app->response->format = Response::FORMAT_JSON;
+			$validacion = ActiveForm::validate($model);
+			if(!$validacion){
+				if($model->login ()){
+					
+				}
+			}
+			
+			return $validacion;
+			
+		}
 	}
 
 	public function actionProfile(){
