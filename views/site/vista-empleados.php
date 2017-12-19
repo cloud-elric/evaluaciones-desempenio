@@ -1,7 +1,7 @@
 <?php 
 use yii\helpers\Url;
 use app\models\EntRespuestas;
-use app\models\RelCuestionarioArea;
+use app\models\RelCuestionarioNiveles;
 
 #$link = Yii::$app->urlManager->createAbsoluteUrl(['site/preguntas-usuario?token=' . $empleado->txt_token]);
 $this->title = "Evaluación";
@@ -46,8 +46,8 @@ function validarCuestionariosRestantes($empleadoCalificar, $usuario){
             $cuestionariosEvaluados[] = $cuestionario->id_cuestionario;
 
         }    
-        $cuestionarios = RelCuestionarioArea::find()
-                            ->where(['id_area'=>$empleadoCalificar->id_area])
+        $cuestionarios = RelCuestionarioNiveles::find()
+                            ->where(['id_nivel'=>$empleadoCalificar->id_nivel])
                             ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
                             ->count();
 

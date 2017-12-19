@@ -36,7 +36,7 @@ if(\Yii::$app->getSession()->hasFlash('success')){
                         Niveles
                     </a>
                     <a class="list-group-item blue-grey-500" 
-                        href="<?= Url::base()."/site/niveles"?>">
+                        href="<?= Url::base()."/site/competencias"?>">
                         <i class="icon wb-user" aria-hidden="true"></i>
                         Competencias
                     </a>
