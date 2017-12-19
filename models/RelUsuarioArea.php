@@ -31,7 +31,7 @@ class RelUsuarioArea extends \yii\db\ActiveRecord
         return [
             [['id_usuario', 'id_area'], 'required'],
             [['id_usuario', 'id_area'], 'integer'],
-            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
             [['id_area'], 'exist', 'skipOnError' => true, 'targetClass' => CatAreas::className(), 'targetAttribute' => ['id_area' => 'id_area']],
         ];
     }

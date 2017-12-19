@@ -60,12 +60,17 @@ class CatNiveles extends \yii\db\ActiveRecord
         return $this->hasMany(EntRespuestas::className(), ['id_nivel' => 'id_nivel']);
     }
 
+    public function getEntRespuestasByCuestionario($idCuestionario)
+    {
+        return $this->hasMany(EntRespuestas::className(), ['id_nivel' => 'id_nivel'])->andWhere(['id_cuestionario'=>$idCuestionario])->all();
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getModUsuariosEntUsuarios()
     {
-        return $this->hasMany(ModUsuariosEntUsuarios::className(), ['id_nivel' => 'id_nivel']);
+        return $this->hasMany(EntUsuarios::className(), ['id_nivel' => 'id_nivel']);
     }
 
     /**
