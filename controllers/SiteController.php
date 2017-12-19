@@ -16,9 +16,10 @@ use app\models\EntCuestionario;
 use app\models\RelUsuarioCuestionario;
 use app\models\EntRespuestas;
 use app\models\RelUsuarioRespuesta;
-use app\models\RelCuestionarioArea;
+use app\models\RelCuestionarioNiveles;
 use app\modules\ModUsuarios\models\Utils;
 use app\models\CatAreas;
+use app\models\CatNiveles;
 
 class SiteController extends Controller
 {
@@ -134,8 +135,8 @@ class SiteController extends Controller
             $cuestionariosEvaluados[] = $cuestionario->id_cuestionario;
 
         }
-        $cuestionarios = RelCuestionarioArea::find()
-            ->where(['id_area' => $usuarioAEvaluar->id_area])
+        $cuestionarios = RelCuestionarioNiveles::find()
+            ->where(['id_nivel' => $usuarioAEvaluar->id_nivel])
             ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
             ->all();
 
@@ -319,7 +320,7 @@ class SiteController extends Controller
         print_r($datos);
     }
 
-    public function actionNiveles(){
+    /*public function actionNiveles(){
         $areas = CatAreas::find()->all();
         $datos = [];
         foreach ($areas as $area){
@@ -327,7 +328,7 @@ class SiteController extends Controller
             //$datos[$area->id_area]['nombreCuestionario']['resultados'] = null;                            
             
             //$respuestas = $area->entRespuestas;
-            $relCuestionariosArea = RelCuestionarioArea::find()->where(['id_area'=>$area->id_area])->all();
+            $relCuestionariosArea = RelCuestionarioNiveles::find()->where(['id_area'=>$area->id_area])->all();
             foreach($relCuestionariosArea as $relCuestionarioArea){
                 $cuestionario =$relCuestionarioArea->idCuestionario;
 
@@ -339,6 +340,33 @@ class SiteController extends Controller
                 }
                 $respuestas = $area->getEntRespuestasByCuestionario($relCuestionarioArea->id_cuestionario);        
                 $datos = $this->arrayResultadosCuestionario($datos, $respuestas, $area, $cuestionario);
+            }
+        }
+        return $this->render('vista-niveles2', [
+            'datos' => $datos
+        ]);
+        //print_r($datos);
+    }*/
+    public function actionNiveles(){
+        $niveles = CatNiveles::find()->all();
+        $datos = [];
+        foreach ($niveles as $nivel){
+            $datos[$nivel->id_nivel]['nombreArea'] = $nivel->txt_nombre;
+            //$datos[$area->id_area]['nombreCuestionario']['resultados'] = null;                            
+            
+            //$respuestas = $area->entRespuestas;
+            $relCuestionariosArea = RelCuestionarioNiveles::find()->where(['id_nivel'=>$nivel->id_nivel])->all();
+            foreach($relCuestionariosArea as $relCuestionarioArea){
+                $cuestionario =$relCuestionarioArea->idCuestionario;
+
+                $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario] = ['resultados' => null ];
+                $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['nombre'] = $cuestionario->txt_nombre;
+                $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['idCuestionario'] = $cuestionario->id_cuestionario;
+                for ($index = 1; $index <= 5; $index++){
+                    $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$index] = 0;                                
+                }
+                $respuestas = $nivel->getEntRespuestasByCuestionario($relCuestionarioArea->id_cuestionario);        
+                $datos = $this->arrayResultadosCuestionario($datos, $respuestas, $nivel, $cuestionario);
             }
         }
         return $this->render('vista-niveles2', [
@@ -394,30 +422,30 @@ class SiteController extends Controller
         ]);
     }
 
-    public function arrayResultadosCuestionario($datos = [], $respuestas, $area, $cuestionario){
+    public function arrayResultadosCuestionario($datos = [], $respuestas, $nivel, $cuestionario){
         foreach ($respuestas as $respuesta){
             $respuestaValores = $respuesta->relUsuarioRespuestas;
             foreach ($respuestaValores as $respuestaValor){
                 switch ($respuestaValor->txt_valor){
                     case '1':
                         # code...
-                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;
+                        $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;
                         break;
                     case '2':
                         # code...
-                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
                         break;
                     case '3':
                         # code...
-                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
                         break;
                     case '4':
                         # code...
-                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
                         break;
                     case '5':
                         # code...
-                        $datos[$area->id_area]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
+                        $datos[$nivel->id_nivel]['cuestionario'][$cuestionario->id_cuestionario]['resultados'][$respuestaValor->txt_valor] += 1;                            
                         break;
                     default:
                         # code...
