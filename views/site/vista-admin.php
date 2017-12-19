@@ -15,14 +15,14 @@ $this->title = "Admin";
                     Niveles
                 </a>
                 <a class="list-group-item blue-grey-500" 
-                    href="<?= Url::base()."/site/niveles"?>">
+                    href="<?= Url::base()."/site/competencias"?>">
                     <i class="icon wb-user" aria-hidden="true"></i>
                     Competencias
                 </a>
                 <a class="list-group-item blue-grey-500" 
-                    href="<?= Url::base()."/site/niveles"?>">
+                    href="<?= Url::base()."/site/empleados"?>">
                     <i class="icon wb-user" aria-hidden="true"></i>
-                    Usuarios
+                    Empleados
                 </a>
             </div>  
         </div>    

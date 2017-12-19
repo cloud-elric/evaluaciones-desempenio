@@ -433,4 +433,18 @@ class SiteController extends Controller
         }
         return $datos;
     }
+
+    public function actionEmpleados(){
+        $datos = [];
+        $vistas = [1,2];
+        foreach($vistas as $vista){
+            $areas = CatAreas::find()->all();
+            foreach ($areas as $area){
+                $datos[$vista][$area->id_area]['nombreArea'] = $area->txt_nombre;
+                $idRespuestas = EntRespuestas::find()->select('GROUP_CONCAT(id_respuesta)')->where(['id_area'=>$area->id_area])->groupBy('id_usuario_evaluado')->all();
+                var_dump($idRespuestas);exit;
+            }
+        }
+        print_r($datos);
+    }
 }
