@@ -95,12 +95,6 @@ class SiteController extends Controller
     {
 
         $usuario = Yii::$app->user->identity;
-        if ($usuario->txt_auth_item == "admin"/*Yii::$app->user->can('admin')*/ ) {
-            $niveles = CatAreas::find()->all();
-
-            return $this->render('vista-admin');
-        }
-
         $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario' => $usuario->id_usuario])->all();
 
         return $this->render('vista-empleados', [
