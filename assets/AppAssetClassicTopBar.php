@@ -27,6 +27,7 @@ class AppAssetClassicTopBar extends AssetBundle
         'js/Plugin/menu.js',
         'js/config/tour.js',
         '../../global/js/ConfigInit.js',
+        '../../global/js/Plugin/bootstrap-sweetalert.js',
         'js/Site.js',
     ];
     public $depends = [

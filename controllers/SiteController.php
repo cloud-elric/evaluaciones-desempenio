@@ -23,6 +23,7 @@ use app\models\CatNiveles;
 
 class SiteController extends Controller
 {
+    public $layout = "classic/topbar/mainBlank";
     /**
      * @inheritdoc
      */
@@ -98,7 +99,7 @@ class SiteController extends Controller
         $usuario = Yii::$app->user->identity;
         $usuariosCalificar = RelUsuarioCuestionario::find()->where(['id_usuario' => $usuario->id_usuario])->all();
 
-        return $this->render('vista-empleados', [
+        return $this->render('evaluacion', [
             'usuariosCalificar' => $usuariosCalificar,
         ]);
 
@@ -140,7 +141,7 @@ class SiteController extends Controller
             ->andWhere(['not in', 'id_cuestionario', $cuestionariosEvaluados])
             ->all();
 
-        return $this->render('vista-preguntas', [
+        return $this->render('preguntas', [
             'cuestionarios' => $cuestionarios,
             'eva' => $token
         ]);

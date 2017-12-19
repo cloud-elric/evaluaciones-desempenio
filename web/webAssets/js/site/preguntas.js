@@ -30,13 +30,18 @@ $(document).ready(function(){
 
        
         if(hasError){
+            l.stop();
+            swal({
+                title: "¡Espera!",
+                text: "Debes contestar todas las preguntas",
+                type: "warning",
+                showCancelButton: false,
+                confirmButtonClass: "btn-success",
+                confirmButtonText: 'OK',
+                closeOnConfirm: false
+              });
            
-            swal(
-                'Datos requeridos',
-                'Debe responder todas las preguntas de la competencia actual',
-                'warning'
-              );
-              l.stop();
+              
         }else{
             $.ajax({
                 url:baseUrl+"site/guardar-preguntas-cuestionario?token="+token+"&eva="+eva,

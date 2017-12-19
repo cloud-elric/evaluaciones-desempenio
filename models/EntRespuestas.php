@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\modules\ModUsuarios\models\EntUsuarios;
 
 /**
  * This is the model class for table "ent_respuestas".
@@ -44,8 +45,8 @@ class EntRespuestas extends \yii\db\ActiveRecord
             [['id_area'], 'exist', 'skipOnError' => true, 'targetClass' => CatAreas::className(), 'targetAttribute' => ['id_area' => 'id_area']],
             [['id_nivel'], 'exist', 'skipOnError' => true, 'targetClass' => CatNiveles::className(), 'targetAttribute' => ['id_nivel' => 'id_nivel']],
             [['id_cuestionario'], 'exist', 'skipOnError' => true, 'targetClass' => EntCuestionario::className(), 'targetAttribute' => ['id_cuestionario' => 'id_cuestionario']],
-            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
-            [['id_usuario_evaluado'], 'exist', 'skipOnError' => true, 'targetClass' => ModUsuariosEntUsuarios::className(), 'targetAttribute' => ['id_usuario_evaluado' => 'id_usuario']],
+            [['id_usuario'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario' => 'id_usuario']],
+            [['id_usuario_evaluado'], 'exist', 'skipOnError' => true, 'targetClass' => EntUsuarios::className(), 'targetAttribute' => ['id_usuario_evaluado' => 'id_usuario']],
         ];
     }
 
@@ -94,7 +95,7 @@ class EntRespuestas extends \yii\db\ActiveRecord
      */
     public function getIdUsuario()
     {
-        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario']);
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario']);
     }
 
     /**
@@ -102,7 +103,7 @@ class EntRespuestas extends \yii\db\ActiveRecord
      */
     public function getIdUsuarioEvaluado()
     {
-        return $this->hasOne(ModUsuariosEntUsuarios::className(), ['id_usuario' => 'id_usuario_evaluado']);
+        return $this->hasOne(EntUsuarios::className(), ['id_usuario' => 'id_usuario_evaluado']);
     }
 
     /**

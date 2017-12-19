@@ -27,6 +27,7 @@ class AppAssetClassicCore extends AssetBundle
         "vendor/switchery/switchery.css",
         "vendor/intro-js/introjs.css",
         "vendor/slidepanel/slidePanel.css",
+        'vendor/bootstrap-sweetalert/sweetalert.css',
         "vendor/flag-icon-css/flag-icon.css",
         // Fonts
         "fonts/web-icons/web-icons.min.css",
@@ -38,7 +39,7 @@ class AppAssetClassicCore extends AssetBundle
     ];
     public $js = [
         'vendor/babel-external-helpers/babel-external-helpers.js',
-        'vendor/jquery/jquery.js',
+        #'vendor/jquery/jquery.js',
         'vendor/tether/tether.js',
         'vendor/bootstrap/bootstrap.js',
         'vendor/animsition/animsition.js',
@@ -50,6 +51,7 @@ class AppAssetClassicCore extends AssetBundle
         'vendor/screenfull/screenfull.js',
         'vendor/slidepanel/jquery-slidePanel.js',
         'vendor/jquery-placeholder/jquery.placeholder.js',
+        'vendor/bootstrap-sweetalert/sweetalert.js',
         'js/State.js',
         'js/Component.js',
         'js/Plugin.js',

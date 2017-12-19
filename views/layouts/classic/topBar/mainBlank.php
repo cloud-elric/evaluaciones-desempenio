@@ -3,10 +3,10 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 use yii\helpers\Html;
-use app\assets\AppAsset;
+use app\assets\AppAssetClassicTopBarBlank;
 use yii\helpers\Url;
 
-AppAsset::register($this);
+AppAssetClassicTopBarBlank::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -28,11 +28,7 @@ AppAsset::register($this);
     </div>
   </div>  
 
-  
-
   <?php $this->endBody();?>
- 
-  
 
   <script>
   (function(document, window, $) {

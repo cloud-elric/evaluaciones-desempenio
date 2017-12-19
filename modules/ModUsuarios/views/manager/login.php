@@ -11,11 +11,6 @@ use yii\widgets\ActiveForm;
 $this->title = 'Login';
 $this->params['classBody'] = "page-login-v3 layout-full";
 
-$this->registerCssFile(
-    '@web/webAssets/templates/classic/topbar/assets/examples/css/pages/login-v3.css',
-    ['depends' => [\app\assets\AppAsset::className()]]
-);
-
 ?>
 
 <div class="panel">
@@ -32,8 +27,8 @@ $this->registerCssFile(
 			'fieldConfig' => [
 				"template" => "{input}{label}{error}",
 				"options" => [
-					 "class" => "form-group form-material floating",
-					 "data-plugin" => "formMaterial"
+					"class" => "form-group form-material floating",
+					"data-plugin" => "formMaterial"
 				],
 				"labelOptions" => [
 					"class" => "floating-label"
@@ -59,3 +54,4 @@ $this->registerCssFile(
 		<p class="soporteTxt">¿Necesitas ayuda? escribe a: <a href="mailto:soporte@2gom.com.mx?Subject=Solicitud%de%Soporte">soporte@2gom.com.mx</a></p>
 	</div>
 </div>
+		

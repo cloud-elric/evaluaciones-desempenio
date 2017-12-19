@@ -89,7 +89,7 @@ class AdminController extends Controller
                 'site/iniciar-evaluacion?token='.$user->txt_token
             ] );
             
-            #$this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
+            $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
         }
 
         return $respuesta;
