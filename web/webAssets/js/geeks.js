@@ -17,14 +17,15 @@ $(document).ready(function() {
     //   });
     
   
-      // Cargador en todos los botones con la clase ladda
-      // $(".ladda-button").on("click", function(e){
-      //    var l = Ladda.create(this);
-      //    l.start();
-      //   // Para deternerlo usar
-      //   // var l = Ladda.create(this);
-      //   // l.stop();
-      // });
+    //   // Cargador en todos los botones con la clase ladda
+        $(".ladda-button").on("click", function(e){
+           var l = Ladda.create(this);
+           l.start();
+           $('#form-ajax').submit();
+    //   //   // Para deternerlo usar
+    //   //   // var l = Ladda.create(this);
+    //   //   // l.stop();
+        });
   
       //Ladda.bind( '.ladda-button' );
       setTimeout(() => {
