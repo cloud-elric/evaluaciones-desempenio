@@ -257,7 +257,8 @@
           loadingClass: 'loader-overlay',
           loadingParentElement: 'html',
           loadingInner: '\n      <div class="loader-content">\n        <div class="loader-index">\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n          <div></div>\n        </div>\n      </div>',
-          onLoadEvent: true
+          onLoadEvent: true,
+          transition: function(url){},
         });
       }
     }, {

@@ -3,7 +3,19 @@
 
 $(document).ready(function() {
     // Animación entre pantallas
+    // $(".animsition").animsition({
+    //     transition: function(url){},
+    //     loading : false
+    //   });
       
+    //   $('.animsition').on('animsition.inStart', function() {
+    //     $(".animsition-loading").hide();
+    //   });
+    
+    //   $('.animsition').on('animsition.outStart', function() {
+    //     $(".animsition-loading").show();
+    //   });
+    
   
       // Cargador en todos los botones con la clase ladda
       // $(".ladda-button").on("click", function(e){
@@ -14,8 +26,13 @@ $(document).ready(function() {
       //   // l.stop();
       // });
   
-      Ladda.bind( '.ladda-button' );
-
+      //Ladda.bind( '.ladda-button' );
+      setTimeout(() => {
+        if( $("body").css('opacity') == '0') {
+            $("body").animsition('in');
+          }    
+      }, 800);
+      
       
           $('#form-ajax').on('ajaxComplete', function (e, jqXHR, textStatus) {
             var l = Ladda.create($("#form-ajax button[type=submit]").get(0));

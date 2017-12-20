@@ -1,3 +1,3 @@
 
-Config.set('assets', baseUrl+'templates/classic/topbar/assets');
+Config.set('assets', baseUrl+'webAssets/templates/classic/topbar/assets');
   

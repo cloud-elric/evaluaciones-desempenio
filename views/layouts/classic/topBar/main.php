@@ -29,9 +29,6 @@ AppAsset::register($this);
 
   <?php $this->endBody();?>
  
-  <script>
-  Config.set('assets', '<?=Url::base()?>/templates/classic/topbar/assets');
-  </script>
 
   <script>
   (function(document, window, $) {
