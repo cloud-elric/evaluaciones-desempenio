@@ -1,0 +1,14 @@
+.soporteTxt {
+    font-size: .9rem;
+}
+
+.developer-link {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px 20px;
+}
+
+.developer-logo {
+    height: 50px;
+}

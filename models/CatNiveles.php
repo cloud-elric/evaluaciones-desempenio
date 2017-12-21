@@ -68,7 +68,7 @@ class CatNiveles extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getModUsuariosEntUsuarios()
+    public function getEntUsuarios()
     {
         return $this->hasMany(EntUsuarios::className(), ['id_nivel' => 'id_nivel']);
     }

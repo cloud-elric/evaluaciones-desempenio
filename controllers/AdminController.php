@@ -8,6 +8,7 @@ use yii\web\Controller;
 use app\modules\ModUsuarios\models\EntUsuarios;
 use app\components\AccessControlExtend;
 use app\models\CatAreas;
+use app\models\CatNiveles;
 use yii\web\Response;
 
 
@@ -36,11 +37,69 @@ class AdminController extends Controller
     
 
     public function actionIndex(){    
-        
-        
-        
+        #Yii::$app->response->format = Response::FORMAT_JSON;
+        $niveles = CatNiveles::find()->where(["b_habilitado"=>1])->all();
+        $resultados = [];
+        foreach($niveles as $nivel){
+            
+            $cuestionariosNivel = $nivel->relCuestionarioNiveles;
 
-        return $this->render("index");
+            $nombreCuestionarios = [];
+            foreach($cuestionariosNivel as $cuestionarioNivel){
+                $cuestionario = $cuestionarioNivel->idCuestionario;
+                $preguntas = $cuestionario->entPreguntas;
+                $respuestas = $cuestionario->getEntRespuestasByNivel($nivel->id_nivel)->all();
+
+                $respuestasUsuarios = [];
+                foreach($respuestas as $respuesta){
+                    $respuestasUsuarios = $respuesta->relUsuarioRespuestas;
+
+                }
+
+                $textoPreguntas = [];
+                foreach($preguntas as $pregunta){
+                    $respuestasValores=[];
+                    $promedio = 0;
+                    $total = 0;
+                    $numPreguntas = 0;
+                    foreach($respuestasUsuarios as $respuestaUsuario){
+                        if($respuestaUsuario->id_pregunta == $pregunta->id_pregunta){
+                            $numPreguntas++;
+                            $total += $respuestaUsuario->txt_valor;
+                        }
+                        
+                    }
+
+                    $promedio = $total/$numPreguntas;
+
+                    $textoPreguntas[] = [
+                        'texto_pregunta'=>$pregunta->txt_pregunta,
+                        'promedio'=>$promedio,
+                        'total'=>$total,
+                        'numPreguntas'=>$numPreguntas
+                        
+                    ];
+                }
+
+                $nombreCuestionarios[] = [
+                    'nombre_cuestionario' =>$cuestionario->txt_nombre,
+                    'identificador'=>$cuestionario->id_cuestionario.$nivel->id_nivel,
+                    'preguntas'=>$textoPreguntas
+                ];
+            }
+
+
+            $resultados[$nivel->id_nivel] = [
+                'nombre_nivel'=>$nivel->txt_nombre,
+                'cuestionarios'=>$nombreCuestionarios,
+            ];
+        }
+
+        // return $resultados;
+
+        // exit;
+
+        return $this->render("index", ["resultados"=>$resultados]);
     }
     
     public function actionAddUsersToList(){

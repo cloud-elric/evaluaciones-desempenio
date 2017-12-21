@@ -69,6 +69,15 @@ class EntCuestionario extends \yii\db\ActiveRecord
         return $this->hasMany(EntPreguntas::className(), ['id_cuestionario' => 'id_cuestionario']);
     }
 
+
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEntRespuestasByNivel($idNivel)
+    {
+        return $this->hasMany(EntRespuestas::className(), ['id_cuestionario' => 'id_cuestionario'])->where(['id_nivel'=>$idNivel]);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

@@ -227,6 +227,7 @@ class SiteController extends Controller
         $respuesta->fch_creacion = Utils::getFechaActual();
         $respuesta->id_usuario = $usuario->id_usuario;
         $respuesta->id_area = $usuarioEvaluar->id_area;
+        $respuesta->id_nivel = $usuarioEvaluar->id_nivel;
         $transaction = EntRespuestas::getDb()->beginTransaction();
         $error = false;
         $errores = [];

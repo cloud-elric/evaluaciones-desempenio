@@ -38,10 +38,14 @@ $this->registerCssFile(
 <div class="panel">
 	<div class="panel-heading">
 		<h3 class="panel-title">
-			<i class="icon wb-check" aria-hidden="true"></i> Competencias
+			Competencias
 		</h3>
 	</div>
 	<div class="panel-body">
+		<div class="brand">
+			<img class="brand-img mb-40" src="<?=Url::base()?>/webAssets/images/logo.png" alt="...">
+		</div>
+
 		<a href="<?=Url::base()?>/site/evaluacion" 
 		class="btn btn-primary ladda-button" ladda-style="zoom-in">
 			<span class="ladda-label">

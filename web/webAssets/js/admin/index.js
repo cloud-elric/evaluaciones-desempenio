@@ -19,6 +19,10 @@ $(document).ready(function(){
             }
         })
 
-    })
+    });
+
+    jQuery('a[data-toggle=tab]').on('shown.bs.tab', function() {
+        jQuery(window).trigger('resize');
+        });
 
 });

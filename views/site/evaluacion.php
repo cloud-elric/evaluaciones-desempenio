@@ -12,10 +12,13 @@ $this->params['classBody'] = "page-login-v3 layout-full";
 <div class="panel">
   <div class="panel-heading">
     <h3 class="panel-title">
-      <i class="icon wb-check" aria-hidden="true"></i> Evaluación
+      Evaluación
     </h3>
   </div>
   <div class="panel-body">
+    <div class="brand">
+      <img class="brand-img mb-40" src="<?=Url::base()?>/webAssets/images/logo.png" alt="...">
+    </div>
     <div class="list-group list-group-dividered list-group-full">
       <?php
         foreach($usuariosCalificar as $usuario){
