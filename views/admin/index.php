@@ -1,7 +1,7 @@
 <?php
 
 use yii\web\View;
-$this->title="Dashboard";
+$this->title="Reporte por nivel";
 
 $this->params['classBody'] = "site-navbar-small dashboard-admin";
 
@@ -36,7 +36,7 @@ $this->registerCssFile(
 <div class="page-main">
   <!-- Media Content Header -->
   <div class="page-header">
-    <h1 class="page-title">Dashboard</h1>
+    <h1 class="page-title"><?=$this->title?></h1>
     <div class="page-header-actions">
       
         <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
