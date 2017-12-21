@@ -23,7 +23,7 @@ use app\models\CatNiveles;
 
 class SiteController extends Controller
 {
-    public $layout = "classic/topbar/mainBlank";
+    public $layout = "classic/topBar/mainBlank";
     /**
      * @inheritdoc
      */

@@ -2,6 +2,7 @@ $(document).ready(function(){
 
     $("#js-enviar-email").on("click", function(e){
         e.preventDefault();
+        var elemento = $(this);
 
         var l = Ladda.create(this);
         
@@ -11,7 +12,11 @@ $(document).ready(function(){
             success:function(resp){
                 if(resp.status="success"){
                     $(".alert.alert-success").addClass("d-block");
-                   
+                    $("#js-enviar-email .ladda-label").html("Evaluaciones enviadas exitosamente <i class='icon fa-check' aria-hidden='true'></i>");
+
+                    setTimeout(() => {
+                        $("#js-enviar-email .ladda-label").html('Enviar evaluaciones<i class="icon fa-send" aria-hidden="true"></i>');
+                    }, 3000);
                 }
                 l.stop();
             }, error:function(){

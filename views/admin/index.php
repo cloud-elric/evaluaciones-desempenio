@@ -38,6 +38,7 @@ $this->registerCssFile(
   <div class="page-header">
     <h1 class="page-title">Dashboard</h1>
     <div class="page-header-actions">
+      
         <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
             <span class="ladda-label">
                 Enviar evaluaciones
