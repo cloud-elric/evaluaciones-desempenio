@@ -161,7 +161,7 @@ class AdminController extends Controller
         $apiKey = Yii::$app->params ['madMimi'] ['api_key'];
         $promotionName= "Evaluaciones";
         
-        $string = Yii::$app->mailer->render('render/sendEmailEvaluacion', ['url' =>$url ], 'layouts/html.php');
+        $string = Yii::$app->mailer->render('render/sendEmailEvaluacion', ['url' =>$url, 'nombre'=>$name." ".$lastName ], 'layouts/html.php');
         
         $ch = curl_init ();
         
