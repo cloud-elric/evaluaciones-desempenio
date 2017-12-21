@@ -27,7 +27,13 @@ $(document).ready(function(){
     });
 
     jQuery('a[data-toggle=tab]').on('shown.bs.tab', function() {
-        jQuery(window).trigger('resize');
+        $(window).trigger("resize");
         });
 
+
+        $( window ).resize(function() {
+            console.log( "<div>Handler for .resize() called.</div>" );
+          });
+
 });
+

@@ -45,10 +45,12 @@ class AdminController extends Controller
             $cuestionariosNivel = $nivel->relCuestionarioNiveles;
 
             $nombreCuestionarios = [];
+            $puntuacionPromedio = 0;
             foreach($cuestionariosNivel as $cuestionarioNivel){
                 $cuestionario = $cuestionarioNivel->idCuestionario;
                 $preguntas = $cuestionario->entPreguntas;
                 $respuestas = $cuestionario->getEntRespuestasByNivel($nivel->id_nivel)->all();
+                $puntuacionPromedio = $cuestionarioNivel->num_puntuacion;
 
                 $respuestasUsuarios = [];
                 foreach($respuestas as $respuesta){
@@ -84,7 +86,8 @@ class AdminController extends Controller
                 $nombreCuestionarios[] = [
                     'nombre_cuestionario' =>$cuestionario->txt_nombre,
                     'identificador'=>$cuestionario->id_cuestionario.$nivel->id_nivel,
-                    'preguntas'=>$textoPreguntas
+                    'preguntas'=>$textoPreguntas,
+                    'puntuacionPromedio'=>$puntuacionPromedio
                 ];
             }
 
@@ -92,6 +95,7 @@ class AdminController extends Controller
             $resultados[$nivel->id_nivel] = [
                 'nombre_nivel'=>$nivel->txt_nombre,
                 'cuestionarios'=>$nombreCuestionarios,
+                
             ];
         }
 

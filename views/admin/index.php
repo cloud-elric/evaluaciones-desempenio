@@ -97,14 +97,17 @@ $this->registerCssFile(
                     $preguntaT = '';
                     $index = 0;
                     $preguntaV = '';
+                    $minimo = '';
                     foreach($cuestionario['preguntas'] as $keys=>$pregunta){
 
                       if ($pregunta === end($cuestionario['preguntas'])) {
                         $preguntaT .= '"Pregunta '.++$index.'"';
                         $preguntaV .= $pregunta['promedio']."";
+                        $minimo .= $cuestionario["puntuacionPromedio"]."";
                       }else{
                         $preguntaT .= '"Pregunta '.++$index.'",';
                         $preguntaV .= $pregunta['promedio'].",";
+                        $minimo .= $cuestionario["puntuacionPromedio"].",";
                       }
                       
                     ?>
@@ -130,15 +133,25 @@ $this->registerCssFile(
 
                     <?php
                     $this->registerJs(
-                      "var simple_line_chart = c3.generate({
+                      "var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
                         bindto: '#chart".$cuestionario["identificador"]."',
                         data: {
                           x: 'x',
                           columns: [
                             ['x', ".$preguntaT."],
-                            ['Puntuación', ".$preguntaV."]
+                            ['Puntuación', ".$preguntaV."],
+                            ['data1', ".$minimo." ]
                           ],
-                          type:'bar'
+                          names: {
+                            data1: 'Puntuación requerida',
+                          },
+                          colors: {
+                            data1: '#ff0000',
+                          },
+                          type:'bar',
+                          types: {
+                            data1: 'line',
+                        },
                         },
                         color: {
                           pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
