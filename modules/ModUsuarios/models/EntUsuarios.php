@@ -9,6 +9,8 @@ use yii\web\IdentityInterface;
 use app\modules\ModUsuarios\models\Utils;
 use kartik\password\StrengthValidator;
 use yii\web\UploadedFile;
+use app\models\CatNiveles;
+use app\models\CatAreas;
 
 /**
  * This is the model class for table "ent_usuarios".
@@ -536,4 +538,20 @@ class EntUsuarios extends \yii\db\ActiveRecord implements IdentityInterface
 			return $usuarioFacebook;
 		}
 	}
+
+	/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdArea()
+    {
+        return $this->hasOne(CatAreas::className(), ['id_area' => 'id_area']);
+	}
+	
+	/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getIdNivel()
+    {
+        return $this->hasOne(CatNiveles::className(), ['id_nivel' => 'id_nivel']);
+    }
 }

@@ -11,6 +11,7 @@ use app\models\CatAreas;
 use app\models\CatNiveles;
 use yii\web\Response;
 use app\models\EntCuestionario;
+use app\models\EntRespuestas;
 
 
 class AdminController extends Controller
@@ -226,10 +227,58 @@ class AdminController extends Controller
     }
 
     public function actionResultadosPorEmpleados(){
+        #Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $empleados = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->orderBy("txt_username, txt_apellido_paterno")->all();
+        $resultados = [];
 
-        return $this->redirect(["site/construccion"]);
-        return $this->render("reporte-por-niveles");
+        foreach($empleados as $empleado){
+            $nivel = $empleado->idNivel;
+
+            $cuestionariosRel = $nivel->relCuestionarioNiveles;
+            $cuestionarios = [];
+            $totalEmpleado = 0;
+            foreach($cuestionariosRel as $cuestionarioRel){
+
+                $respuestas = EntRespuestas::find()->where(["id_cuestionario"=>$cuestionarioRel, "id_usuario_evaluado"=>$empleado->id_usuario])->all();
+
+                $promedio = 0;
+                $total = 0;
+                $numValores = 0;
+                
+                foreach($respuestas as $respuesta){
+                    $respuestasValores = $respuesta->relUsuarioRespuestas;
+
+                    foreach($respuestasValores as $respuestaValor){
+                        $numValores++;
+                        $total +=$respuestaValor->txt_valor;
+                    }
+                }
+
+                if($numValores>0){
+                    $promedio = round(($total / $numValores), 1);
+                }
+                
+                $totalEmpleado = $totalEmpleado + $promedio;
+
+                $cuestionarios[]=[
+                    'nombreCuestionario'=>$cuestionarioRel->idCuestionario->txt_nombre,
+                    'promedio'=>$promedio
+                ];
+            }
+            
+            $promedioEmpleado = $totalEmpleado / count($cuestionariosRel);
+
+            $resultados[$empleado->id_usuario] = [
+                'nombre'=>$empleado->nombreCompleto,
+                'promedio'=>round($promedioEmpleado, 1),
+                'cuestionarios'=>$cuestionarios,
+                //'totalEmpleado'=>$totalEmpleado
+            ];
+        }
+
+        #return $resultados;
+        return $this->render("resultados-por-empleados", ['resultados'=>$resultados]);
     }
 
     public function actionResultadosPorArea(){
