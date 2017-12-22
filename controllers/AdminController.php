@@ -282,9 +282,33 @@ class AdminController extends Controller
     }
 
     public function actionResultadosPorArea(){
+        // Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $this->layout = "@app/views/layouts/classic/topBar/mainBlank";
+        // $areas = CatAreas::find()->where(['b_habilitado'=>1])->all();
+        // $resultados = [];
+        // $areasNombre = [];
+
+        // foreach($areas as $area){
+        //     $respuestas = $area->entRespuestas;
+        //     foreach($respuestas as $respuesta){
+        //         $respuestasValores = $respuesta->relUsuarioRespuestas;
+
+        //         foreach($respuestasValores as $respuestaValores){
+
+        //         }
+        //     }
+           
+
+        //     $resultados[$area->id_area] = [
+        //         'nombreArea'=>$area->txt_nombre,
+                
+
+        //     ];
+        // }
+
         
+        
+        // return $resultados;
         return $this->redirect(["site/construccion"]);
         return $this->render("reporte-por-niveles");
     }

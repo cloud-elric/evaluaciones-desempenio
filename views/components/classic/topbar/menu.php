@@ -32,7 +32,7 @@ use yii\helpers\Url;
                       </li>
                       <li class="site-menu-item">
                         <a class="animsition-link" href="<?=Url::base()?>/admin/resultados-por-competencias">
-                          <span class="site-menu-title">Competenciass</span>
+                          <span class="site-menu-title">Competencias</span>
                         </a>
                       </li>
                       <li class="site-menu-item">

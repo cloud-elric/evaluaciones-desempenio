@@ -38,8 +38,7 @@ $this->registerCssFile(
                     <div class="panel">
                         <div class="panel-body">
                             <?php
-                            foreach($resultados as $index=>$empleado){
-                               
+                            foreach($resultados as $index=>$empleado){  
                             ?>  
                                 <div class="panel">
                                     <div class="panel-body">
