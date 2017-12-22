@@ -10,6 +10,7 @@ use app\components\AccessControlExtend;
 use app\models\CatAreas;
 use app\models\CatNiveles;
 use yii\web\Response;
+use app\models\EntCuestionario;
 
 
 class AdminController extends Controller
@@ -106,6 +107,45 @@ class AdminController extends Controller
         return $this->render("index", ["resultados"=>$resultados]);
     }
     
+    public function actionResultadosPorCompetencias(){
+        //Yii::$app->response->format = Response::FORMAT_JSON;
+        $resultados = [];
+        $cuestionarios = EntCuestionario::find()->all();
+
+        foreach($cuestionarios as $cuestionario){
+            $preguntasRel = $cuestionario->entPreguntas;
+            $preguntas = [];
+            foreach($preguntasRel as $preguntaRel){
+                $respuestasRel = $preguntaRel->relUsuarioRespuestas;
+
+                $promedio = 0;
+                $total = 0;
+                $numPreguntas = count($respuestasRel);
+                foreach($respuestasRel as $respuestaRel){
+                    $total +=$respuestaRel->txt_valor;
+                }
+                
+                $promedio = $total/$numPreguntas;
+
+                $preguntas[]=[
+                    'texto_pregunta'=>$preguntaRel->txt_pregunta,
+                    'promedio'=>round($promedio, 1),
+                    'total'=>$total,
+                ];
+            } 
+
+
+            $resultados[$cuestionario->id_cuestionario]=[
+                'nombre_cuestionario'=>$cuestionario->txt_nombre,
+                'identificador'=>$cuestionario->id_cuestionario,
+                'preguntas'=>$preguntas,
+
+            ];
+        }
+
+        return $this->render("resultados-por-competencia", ["resultados"=>$resultados]);
+    }
+
     public function actionAddUsersToList(){
         $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->all();
 

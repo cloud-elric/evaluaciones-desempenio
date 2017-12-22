@@ -15,6 +15,7 @@ use Yii;
  *
  * @property CatTipoPregunta $idTipoPregunta
  * @property EntCuestionario $idCuestionario
+ * @property RelUsuarioRespuesta[] $relUsuarioRespuestas
  */
 class EntPreguntas extends \yii\db\ActiveRecord
 {
@@ -68,5 +69,13 @@ class EntPreguntas extends \yii\db\ActiveRecord
     public function getIdCuestionario()
     {
         return $this->hasOne(EntCuestionario::className(), ['id_cuestionario' => 'id_cuestionario']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelUsuarioRespuestas()
+    {
+        return $this->hasMany(RelUsuarioRespuesta::className(), ['id_pregunta' => 'id_pregunta']);
     }
 }
