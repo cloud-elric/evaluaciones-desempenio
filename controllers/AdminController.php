@@ -225,9 +225,20 @@ class AdminController extends Controller
         }
     }
 
-    public function actionReportePorNiveles(){
+    public function actionResultadosPorEmpleados(){
 
+
+        return $this->redirect(["site/construccion"]);
         return $this->render("reporte-por-niveles");
     }
+
+    public function actionResultadosPorArea(){
+
+        $this->layout = "@app/views/layouts/classic/topBar/mainBlank";
+        
+        return $this->redirect(["site/construccion"]);
+        return $this->render("reporte-por-niveles");
+    }
+
 
 }

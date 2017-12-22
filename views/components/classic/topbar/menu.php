@@ -26,7 +26,7 @@ use yii\helpers\Url;
                         </a>
                       </li>
                       <li class="site-menu-item">
-                        <a class="animsition-link" href="../layouts/layout-grid.html">
+                        <a class="animsition-link" href="<?=Url::base()?>/admin/resultados-por-empleados">
                           <span class="site-menu-title">Empleados</span>
                         </a>
                       </li>
@@ -36,7 +36,7 @@ use yii\helpers\Url;
                         </a>
                       </li>
                       <li class="site-menu-item">
-                        <a class="animsition-link" href="../layouts/panel-transition.html">
+                        <a class="animsition-link" href="<?=Url::base()?>/admin/resultados-por-area">
                           <span class="site-menu-title">Área</span>
                         </a>
                       </li>
