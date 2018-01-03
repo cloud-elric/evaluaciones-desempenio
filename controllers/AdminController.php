@@ -316,7 +316,7 @@ class AdminController extends Controller
                         'cuestionarioNombre'=>$cuestionario->txt_nombre,
                         'preguntas'=>$preguntaTexto,
                         'promedioTotal'=>$promedioTotal,
-                        'identificador'=>$area->id_area.$cuestionario->id_cuestionario
+                        'identificador'=>$area->id_area.$cuestionario->id_cuestionario.$respuesta->id_respuesta,
                     ];
                 }    
 

@@ -15,14 +15,25 @@ foreach($cuestionariosRel as $cuestionarioRel){
     $promedio = 0;
     $total = 0;
     $numValores = 0;
-    
+    $usuariosCalificaron = [];
     foreach($respuestas as $respuesta){
         $respuestasValores = $respuesta->relUsuarioRespuestas;
+        $usuarioCalifico = $respuesta->idUsuario;
 
+        $totalCalifico = 0;
+        $promedioCalifico = 0;
         foreach($respuestasValores as $respuestaValor){
             $numValores++;
             $total +=$respuestaValor->txt_valor;
+            $totalCalifico += $respuestaValor->txt_valor;
         }
+
+        $promedioCalifico = $totalCalifico / count($respuestasValores);
+        $usuariosCalificaron[] = [
+            'nombreUsuario'=>$usuarioCalifico->nombreCompleto,
+            'calificacion'=>round($promedioCalifico, 1),
+            'competencia'=>$cuestionarioRel->idCuestionario->txt_nombre
+        ];
     }
 
     $promedioAuto = 0;
@@ -54,7 +65,8 @@ foreach($cuestionariosRel as $cuestionarioRel){
         'total'=>$total,
         'numValores'=>$numValores,
         'respuestas'=>$respuestas,
-        'puntuacionMinima'=>$cuestionarioRel->num_puntuacion
+        'puntuacionMinima'=>$cuestionarioRel->num_puntuacion,
+        'usuariosCalificaron'=>$usuariosCalificaron
     ];
 }
 
@@ -84,12 +96,34 @@ $empleado = [
                     $i = 0;
                     $minimo = '';
                     $cuestionarioValorAuto = '';
+                    $columns='';
+                    $columnsName = '';
+                    $type='';
+                    $valorU = "";
+                    
                     foreach ($empleado["cuestionarios"] as $cuestionario) {
+
+                        foreach($cuestionario['usuariosCalificaron'] as $llave=>$usuarioCal ){
+                            $columnsName .= "data0".$llave.": '".$usuarioCal["nombreUsuario"]."',";
+                            $type .= "data0".$llave.": 'line',";
+                            
+                            
+                            if($cuestionario["nombreCuestionario"] == $usuarioCal['competencia']){
+                                $valorU .= $usuarioCal["calificacion"].",";
+                            }else{
+                                $valorU .= ",";
+                            }
+                            $columns .="['data0".$llave."', ".$valorU."],";    
+                        }
+
+                        
+
                         if ($cuestionario === end($empleado["cuestionarios"])) {
                             $cuestionarioNombre .= '"Competencia ' . ++$i . '"';
                             $cuestionarioValor .= $cuestionario['promedio'] . "";
                             $minimo .= $cuestionario["puntuacionMinima"] . "";
                             $cuestionarioValorAuto .= $cuestionario["promedioAuto"] . "";
+                            
                         } else {
                             $cuestionarioNombre .= '"Competencia ' . ++$i . '",';
                             $cuestionarioValor .= $cuestionario['promedio'] . ",";
@@ -129,17 +163,21 @@ $empleado = [
                                         ['Puntuación', <?=$cuestionarioValor?>],
                                         ['data1', <?=$minimo?> ],
                                         ['data2', <?=$cuestionarioValorAuto?> ],
+                                        <?=$columns?>
                                     ],
                                     names: {
                                         data1: 'Puntuación requerida',
                                         data2: 'Puntuación autoevaluación',
+                                        <?=$columnsName?>
                                         },
                                     colors: {
                                         data1: 'rgb(255, 233, 0)',
+                                        
                                     },
                                     types: {
                                         data1: 'line',
                                         data2: 'line',
+                                        <?=$type?>
                                     },
                                     
                                     type:'bar',
@@ -195,17 +233,21 @@ $empleado = [
                                 ['Puntuación', " . $cuestionarioValor . "],
                                 ['data1', " . $minimo . " ],
                                 ['data2', " . $cuestionarioValorAuto . " ],
+                                ".$columns."
                             ],
                             names: {
                                 data1: 'Puntuación requerida',
                                 data2: 'Puntuación autoevaluación',
+                                ".$columnsName."
                                 },
                             colors: {
                                 data1: 'rgb(255, 233, 0)',
+                                Puntuación: 'rgb(180, 195, 210)',
                             },
                             types: {
                                 data1: 'line',
                                 data2: 'line',
+                                ".$type."
                             },
                             
                             type:'bar',
