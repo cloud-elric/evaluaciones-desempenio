@@ -132,8 +132,8 @@ class EntUsuariosController extends Controller
         }
 
         $empleados = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"]);
-        $empleados->andFilterWhere(['like', 'txt_username', $q])
-            ->andFilterWhere(['like', 'txt_apellido_paterno', $q]);
+        $empleados->orFilterWhere(['like', 'txt_usename', $q])
+            ->orFilterWhere(['like', 'txt_apellido_paterno', $q]);
        
         $dataProvider = new ActiveDataProvider([
             'query' => $empleados,
