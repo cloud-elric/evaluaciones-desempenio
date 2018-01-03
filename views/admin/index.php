@@ -89,7 +89,10 @@ $this->registerCssFile(
 
               <section>
                 <h6 class="panel-title">
-                  <?=$cuestionario["nombre_cuestionario"]?>
+                  <?=$cuestionario["nombre_cuestionario"]?><br>
+                  <small>
+                  <?=$cuestionario["promedioCuestionario"]?>
+                  </small>
                 </h6>
                 <div class="row">
                   <div class="col-md-6">
@@ -146,7 +149,7 @@ $this->registerCssFile(
                             data1: 'Puntuación requerida',
                           },
                           colors: {
-                            data1: '#ff0000',
+                            data1: 'rgb(255, 233, 0)',
                           },
                           type:'bar',
                           types: {

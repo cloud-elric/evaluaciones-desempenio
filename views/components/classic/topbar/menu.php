@@ -27,12 +27,12 @@ use yii\helpers\Url;
                       </li>
                       <li class="site-menu-item">
                         <a class="animsition-link" href="<?=Url::base()?>/admin/resultados-por-empleados">
-                          <span class="site-menu-title">Empleados</span>
+                          <span class="site-menu-title">Individuales</span>
                         </a>
                       </li>
                       <li class="site-menu-item">
                         <a class="animsition-link" href="<?=Url::base()?>/admin/resultados-por-competencias">
-                          <span class="site-menu-title">Competencias</span>
+                          <span class="site-menu-title">Empresa</span>
                         </a>
                       </li>
                       <li class="site-menu-item">

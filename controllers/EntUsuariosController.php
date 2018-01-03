@@ -8,6 +8,7 @@ use app\modules\ModUsuarios\models\EntUsuariosSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * EntUsuariosController implements the CRUD actions for EntUsuarios model.
@@ -120,5 +121,55 @@ class EntUsuariosController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionBuscarEmpleado($q = null, $page = 0)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+      
+        if ($page > 1) {
+            $page--;
+        }
+
+        $empleados = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"]);
+        $empleados->andFilterWhere(['like', 'txt_username', $q])
+            ->andFilterWhere(['like', 'txt_apellido_paterno', $q]);
+       
+        $dataProvider = new ActiveDataProvider([
+            'query' => $empleados,
+             'pagination'=>[
+                 'pageSize' =>30,
+                 'page' => $page
+             ],
+            'sort' => [
+                'defaultOrder' => [
+                    'txt_username' => \SORT_ASC,
+                    'txt_apellido_paterno'=> \SORT_ASC,
+                ]
+            ],
+            
+        ]);
+        $response['results'] = null;
+        $response['total_count'] = $dataProvider->getTotalCount();
+
+        $resultados = $dataProvider->getModels();
+        if (count($resultados) == 0) {
+            $response['results'][0] = ['id' => '', "txt_nombre" => ''];
+        }
+
+        foreach ($resultados as $model) {
+            
+                $response['results'][] = [
+                    'id' => $model->id_usuario, 
+                    "txt_nombre" => $model->nombreCompleto];    
+            }    
+
+           
+            // else{
+            //     $response['results'][] = ['id' => $model->id_equipo, "txt_nombre" => $model->txt_nombre, "cantidad" => 0];
+            // }    
+              
+
+        return $response;
     }
 }

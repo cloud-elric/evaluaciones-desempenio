@@ -35,7 +35,7 @@ $this->params['classBody'] = "page-login-v3 layout-full";
                   </div>
                   <div class="media-body">
                     <div class="float-right">
-                      <span class="badge badge-<?=$usuario->b_completado?"success":"warning"?>"><?=$usuario->b_completado?"Compleado":"Pendiente"?></span>
+                      <span class="badge badge-<?=$usuario->b_completado?"success":"warning"?>"><?=$usuario->b_completado?"Completado":"Pendiente"?></span>
                     </div>
                     
                   </div>
