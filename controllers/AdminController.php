@@ -124,6 +124,7 @@ class AdminController extends Controller
         foreach($cuestionarios as $cuestionario){
             $preguntasRel = $cuestionario->entPreguntas;
             $preguntas = [];
+            $promedioTotal = 0;
             foreach($preguntasRel as $preguntaRel){
                 $respuestasRel = $preguntaRel->relUsuarioRespuestas;
 
@@ -135,7 +136,7 @@ class AdminController extends Controller
                 }
                 
                 $promedio = $total/$numPreguntas;
-
+                $promedioTotal += $promedio;
                 $preguntas[]=[
                     'texto_pregunta'=>$preguntaRel->txt_pregunta,
                     'promedio'=>round($promedio, 1),
@@ -143,11 +144,15 @@ class AdminController extends Controller
                 ];
             } 
 
+            if(count($preguntasRel)>0){
+                $promedioTotal = $promedioTotal / count($preguntasRel);
+            }
 
             $resultados[$cuestionario->id_cuestionario]=[
                 'nombre_cuestionario'=>$cuestionario->txt_nombre,
                 'identificador'=>$cuestionario->id_cuestionario,
                 'preguntas'=>$preguntas,
+                'promedioTotal'=>$promedioTotal
 
             ];
         }
@@ -262,36 +267,74 @@ class AdminController extends Controller
     }
 
     public function actionResultadosPorArea(){
-        // Yii::$app->response->format = Response::FORMAT_JSON;
+         #Yii::$app->response->format = Response::FORMAT_JSON;
+         $areas = CatAreas::find()->where(["b_habilitado"=>1])->all();
+         $cuestionarios = EntCuestionario::find()->all();
+         
+         $resultados = [];
+         
+         foreach($areas as $area){
+            $respuestas = [];
+            $cuestionariosArea = [];
+            
+            foreach($cuestionarios as $cuestionario){
+                $respuestas = EntRespuestas::find()
+                    ->where(['id_area'=>$area->id_area, 'id_cuestionario'=>$cuestionario->id_cuestionario])
+                    ->all();
 
-        // $areas = CatAreas::find()->where(['b_habilitado'=>1])->all();
-        // $resultados = [];
-        // $areasNombre = [];
+                $promedioTotal = 0;
+                $numPreguntas = 0;    
 
-        // foreach($areas as $area){
-        //     $respuestas = $area->entRespuestas;
-        //     foreach($respuestas as $respuesta){
-        //         $respuestasValores = $respuesta->relUsuarioRespuestas;
+                foreach($respuestas as $respuesta){
+                    $preguntas = $respuesta->idCuestionario->entPreguntas;
+                    $numPreguntas = count($preguntas);
+                    $preguntaTexto = [];
+                    $respuestasValores = $respuesta->relUsuarioRespuestas;
 
-        //         foreach($respuestasValores as $respuestaValores){
+                    $promedio = 0;
+                    $total = 0;
+                    $numRespuesta = 0;
+                    foreach($preguntas as $pregunta){
+                        foreach($respuestasValores as $respuestaValor){
+                            if($respuestaValor->id_pregunta==$pregunta->id_pregunta){
+                                $numRespuesta++;
+                                $total +=$respuestaValor->txt_valor;
+                            }
+                        }
+                        $promedio = $total/$numRespuesta;
+                        $promedioTotal += $promedio;
+                        $preguntaTexto[] = [
+                            'textoPregunta'=>$pregunta->txt_pregunta,
+                            'promedio'=>round($promedio, 1),
+                        ];
+                    }
 
-        //         }
-        //     }
-           
+                    if($numPreguntas>0){
+                        $promedioTotal = $promedioTotal/$numPreguntas;
+                    }
+                    $cuestionariosArea[] = [
+                        'cuestionarioNombre'=>$cuestionario->txt_nombre,
+                        'preguntas'=>$preguntaTexto,
+                        'promedioTotal'=>$promedioTotal,
+                        'identificador'=>$area->id_area.$cuestionario->id_cuestionario
+                    ];
+                }    
 
-        //     $resultados[$area->id_area] = [
-        //         'nombreArea'=>$area->txt_nombre,
+            }
+
+             $resultados[$area->id_area] = [
+                'nombreArea'=>$area->txt_nombre = $area->txt_nombre,
+                'cuestionarios'=>$cuestionariosArea,
                 
-
-        //     ];
-        // }
-
-        
-        
-        // return $resultados;
-        return $this->redirect(["site/construccion"]);
-        return $this->render("reporte-por-niveles");
+             ];
+             
+         }
+ 
+          #return $resultados;
+        #return $this->redirect(["site/construccion"]);
+        return $this->render("resultados-por-areas", ['resultados'=>$resultados]);
     }
 
+    
 
 }

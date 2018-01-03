@@ -45,7 +45,10 @@ $this->registerCssFile(
 
                                 <section>
                                     <h6 class="panel-title">
-                                    <?=$cuestionario["nombre_cuestionario"]?>
+                                        <?=$cuestionario["nombre_cuestionario"]?><br>
+                                        <small>
+                                        <?=round($cuestionario["promedioTotal"], 1)?>
+                                        </small>
                                     </h6>
                                     <div class="row">
                                     <div class="col-md-6">

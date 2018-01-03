@@ -78,4 +78,12 @@ class EntPreguntas extends \yii\db\ActiveRecord
     {
         return $this->hasMany(RelUsuarioRespuesta::className(), ['id_pregunta' => 'id_pregunta']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRelUsuarioRespuestasByPregunta($idRespuesta)
+    {
+        return $this->hasOne(RelUsuarioRespuesta::className(), ['id_pregunta' => 'id_pregunta'])->where(['id_respuesta'=>$idRespuesta]);
+    }
 }
