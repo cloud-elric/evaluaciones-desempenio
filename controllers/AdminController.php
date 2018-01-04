@@ -76,7 +76,9 @@ class AdminController extends Controller
                         
                     }
 
-                    $promedio = $total/$numPreguntas;
+                    if($numPreguntas>0){
+                        $promedio = $total/$numPreguntas;
+                    }
                     $promedioCuestionario += $promedio;
 
                     $textoPreguntas[] = [
