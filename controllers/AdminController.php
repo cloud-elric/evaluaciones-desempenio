@@ -137,7 +137,10 @@ class AdminController extends Controller
                     $total +=$respuestaRel->txt_valor;
                 }
                 
-                $promedio = $total/$numPreguntas;
+                if($numPreguntas>0){
+                    $promedio = $total/$numPreguntas;
+                }
+                
                 $promedioTotal += $promedio;
                 $preguntas[]=[
                     'texto_pregunta'=>$preguntaRel->txt_pregunta,
