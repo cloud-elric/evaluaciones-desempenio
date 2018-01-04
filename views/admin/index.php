@@ -142,11 +142,12 @@ $this->registerCssFile(
                           x: 'x',
                           columns: [
                             ['x', ".$preguntaT."],
-                            ['Puntuación', ".$preguntaV."],
+                            ['puntuacion', ".$preguntaV."],
                             ['data1', ".$minimo." ]
                           ],
                           names: {
-                            data1: 'Puntuación requerida',
+                            puntuacion: 'Total otros',
+                            data1: 'Nivel meta',
                           },
                           colors: {
                             data1: 'rgb(255, 233, 0)',

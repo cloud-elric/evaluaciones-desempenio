@@ -189,14 +189,15 @@ $empleado = [
                                     x: 'x',
                                     columns: [
                                         ['x', <?=$cuestionarioNombre?>],
-                                        ['Puntuación', <?=$cuestionarioValor?>],
+                                        ['puntuacion', <?=$cuestionarioValor?>],
                                         ['data1', <?=$minimo?> ],
                                         ['data2', <?=$cuestionarioValorAuto?> ],
                                         <?=$columns?>
                                     ],
                                     names: {
-                                        data1: 'Puntuación requerida',
-                                        data2: 'Puntuación autoevaluación',
+                                        puntuacion: 'Total otros',
+                                        data1: 'Nivel meta',
+                                        data2: 'Autoevaluación',
                                         <?=$columnsName?>
                                         },
                                     colors: {
@@ -259,14 +260,15 @@ $empleado = [
                             x: 'x',
                             columns: [
                                 ['x', " . $cuestionarioNombre . "],
-                                ['Puntuación', " . $cuestionarioValor . "],
+                                ['puntuacion', " . $cuestionarioValor . "],
                                 ['data1', " . $minimo . " ],
                                 ['data2', " . $cuestionarioValorAuto . " ],
                                 ".$columns."
                             ],
                             names: {
-                                data1: 'Puntuación requerida',
-                                data2: 'Puntuación autoevaluación',
+                                puntuacion: 'Total otros',
+                                data1: 'Nivel meta',
+                                data2: 'Autoevaluación',
                                 ".$columnsName."
                                 },
                             colors: {

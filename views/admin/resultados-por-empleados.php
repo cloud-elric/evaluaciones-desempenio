@@ -45,7 +45,7 @@ $this->registerCssFile(
                     <div class="panel">
                         <div class="panel-body pt-20">
                             <div class="row">
-                                <div class="col-md-4 offset-md-8">
+                                <div class="col-md-4">
                                     
                                     <?php
                                     
@@ -77,7 +77,7 @@ $this->registerCssFile(
                                         ],
                                         'pluginOptions' => [
                                             'allowClear' => true,
-                                            'minimumInputLength' => 5,
+                                            'minimumInputLength' => 3,
                                             'ajax' => [
                                                 'url' => $url,
                                                 'dataType' => 'json',

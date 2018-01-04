@@ -132,9 +132,13 @@ $this->registerCssFile(
                           x: 'x',
                           columns: [
                             ['x', ".$preguntaT."],
-                            ['Puntuación', ".$preguntaV."],
+                            ['puntuacion', ".$preguntaV."],
                            
                           ],
+                          names: {
+                            puntuacion: 'Total otros',
+                            
+                          },
                           
                           
                           type:'bar',
