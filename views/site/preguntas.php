@@ -56,14 +56,17 @@ $this->registerCssFile(
 </div>
 
 <?php
+$i = 0;
 foreach($cuestionarios as $cuestionario){
+	$i++;
 	$cuestionario = $cuestionario->idCuestionario;
 	$preguntas = $cuestionario->entPreguntas;
 ?>
 <div class="panel panel-success">
 	<div class="panel-heading">
 		<h3 class="panel-title">
-			<?=$cuestionario->txt_nombre?>
+			Competencia <?=$i?>
+			
 		</h3>
 			
 	</div>
