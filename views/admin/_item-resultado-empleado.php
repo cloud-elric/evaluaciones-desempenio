@@ -1,12 +1,21 @@
 <?php
 
 use app\models\EntRespuestas;
+use app\models\RelUsuarioCuestionario;
 use yii\web\View;
+
+
 $nivel = $model->idNivel;
 
 $cuestionariosRel = $nivel->relCuestionarioNiveles;
 $cuestionarios = [];
 $totalEmpleado = 0;
+
+$usuariosEvaluaran = RelUsuarioCuestionario::find()
+                            ->where(["id_usuario_calificado"=>$model->id_usuario])
+                            ->andWhere(['!=', 'id_usuario', $model->id_usuario])
+                            ->all();
+
 foreach($cuestionariosRel as $cuestionarioRel){
 
     $respuestas = EntRespuestas::find()->where(['!=', 'id_usuario', $model->id_usuario])->andWhere(["id_cuestionario"=>$cuestionarioRel->id_cuestionario, "id_usuario_evaluado"=>$model->id_usuario])->all();
@@ -31,6 +40,7 @@ foreach($cuestionariosRel as $cuestionarioRel){
         $promedioCalifico = $totalCalifico / count($respuestasValores);
         $usuariosCalificaron[] = [
             'nombreUsuario'=>$usuarioCalifico->nombreCompleto,
+            'identificadorUsuario'=>$usuarioCalifico->id_usuario,
             'calificacion'=>round($promedioCalifico, 1),
             'competencia'=>$cuestionarioRel->idCuestionario->txt_nombre
         ];
@@ -66,7 +76,8 @@ foreach($cuestionariosRel as $cuestionarioRel){
         'numValores'=>$numValores,
         'respuestas'=>$respuestas,
         'puntuacionMinima'=>$cuestionarioRel->num_puntuacion,
-        'usuariosCalificaron'=>$usuariosCalificaron
+        'usuariosCalificaron'=>$usuariosCalificaron,
+        
     ];
 }
 
@@ -76,6 +87,7 @@ $empleado = [
     'nombre'=>$model->nombreCompleto,
     'promedio'=>round($promedioEmpleado, 1),
     'cuestionarios'=>$cuestionarios,
+    'usuariosEvaluaran'=>$usuariosEvaluaran
     //'totalEmpleado'=>$totalEmpleado
 ];
 ?>
@@ -96,27 +108,30 @@ $empleado = [
                     $i = 0;
                     $minimo = '';
                     $cuestionarioValorAuto = '';
-                    $columns='';
+                    $columns = '';
                     $columnsName = '';
                     $type='';
-                    $valorU = "";
+                    $valorU = [];
+                    $vt = '';
                     
+                    foreach($empleado["usuariosEvaluaran"] as $key=>$empleadoEvaluar){
+                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto."',";
+                        $type .= "data0".$empleadoEvaluar->id_usuario .": 'line',";
+                        $columns.="['data0".$empleadoEvaluar->id_usuario."', {data".$empleadoEvaluar->id_usuario."}],"; 
+                        #$columns.="['data0".$empleadoEvaluar->id_usuario."', {data}],"; 
+                    }
+                    #echo json_encode($empleado["cuestionarios"]);
                     foreach ($empleado["cuestionarios"] as $cuestionario) {
 
                         foreach($cuestionario['usuariosCalificaron'] as $llave=>$usuarioCal ){
-                            $columnsName .= "data0".$llave.": '".$usuarioCal["nombreUsuario"]."',";
-                            $type .= "data0".$llave.": 'line',";
+                            foreach($empleado["usuariosEvaluaran"] as $empleadoEvaluar){
+                                if($usuarioCal['identificadorUsuario'] == $empleadoEvaluar->id_usuario){
+                                    
+                                    $valorU[$empleadoEvaluar->id_usuario][]= $usuarioCal['calificacion'];
+                                }
                             
-                            
-                            if($cuestionario["nombreCuestionario"] == $usuarioCal['competencia']){
-                                $valorU .= $usuarioCal["calificacion"].",";
-                            }else{
-                                $valorU .= ",";
                             }
-                            $columns .="['data0".$llave."', ".$valorU."],";    
                         }
-
-                        
 
                         if ($cuestionario === end($empleado["cuestionarios"])) {
                             $cuestionarioNombre .= '"Competencia ' . ++$i . '"';
@@ -144,6 +159,20 @@ $empleado = [
                     <?php
 
                 }
+
+                 foreach($empleado["usuariosEvaluaran"] as $key=>$empleadoEvaluar){
+                     $vt = '';
+                     if(array_key_exists($empleadoEvaluar->id_usuario, $valorU)){
+                         foreach($valorU[$empleadoEvaluar->id_usuario] as $valoresEmpleado){
+                             $vt .= $valoresEmpleado.",";
+                         }
+
+                     }
+
+                     $search = "{data".$empleadoEvaluar->id_usuario."}";
+                     $columns = str_replace($search,$vt,$columns); 
+                 }
+
                 ?>
 
                 </div>
