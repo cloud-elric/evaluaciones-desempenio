@@ -53,7 +53,7 @@
 		<td colspan="7" style="display:block;width:432;height:55;background-color:#fff;font-family: 'verdana','sans-serif';font-size: 13px; text-align: justify; color:#000;overflow: hidden;">
 
 			<!-- Aqui va el nombre del empleado -->
-			<h3>Hola <?=$nombre?></h3></td>
+			<h3>Hola Humberto</h3></td>
 		<td>
 			<img src="https://qa.2geeksonemonkey.com/mailings/licuadora/images/spacer.gif" width="1" height="55" alt=""></td>
 	</tr>
@@ -67,7 +67,7 @@
 
 
 			<!-- Aqui va el Token -->
-			<a href="<?=$url?>" target="_blank" style="display:block;width:432;height:46;background-color: #32b2a5;color:#FFF;text-decoration: none;line-height: 46px;letter-spacing: 1px; font-family: 'verdana','sans-serif';font-size: 14px; text-align: center;font-weight: 800; ">Ir a mi evaluación</a></td>
+			<a href="#" target="_blank" style="display:block;width:432;height:46;background-color: #32b2a5;color:#FFF;text-decoration: none;line-height: 46px;letter-spacing: 1px; font-family: 'verdana','sans-serif';font-size: 14px; text-align: center;font-weight: 800; ">Ir a mi evaluación</a></td>
 		<td>
 
 
