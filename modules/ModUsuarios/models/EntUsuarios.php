@@ -434,6 +434,7 @@ class EntUsuarios extends \yii\db\ActiveRecord implements IdentityInterface
 		$user->setPassword ( $this->password );
 		$user->generateAuthKey ();
 		$user->fch_creacion = Utils::getFechaActual ();
+		$user->txt_auth_key = "usuario-normal";
 		//$user->id_tipo_usuario = 1;
 
 		
