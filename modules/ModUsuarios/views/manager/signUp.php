@@ -7,7 +7,7 @@ use yii\helpers\Url;
 /* @var $model app\models\EntUsuarios */
 
 $this->title = 'Registrarse';
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['classBody'] = "page-login-v3 layout-full";
 $this->registerCssFile(
   '@web/webassets/css/signUp.css',
   ['depends' => [\yii\web\JqueryAsset::className()]]
