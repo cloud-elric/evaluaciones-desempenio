@@ -204,7 +204,7 @@ class AdminController extends Controller
 
     public function actionSendEmail(){
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->all();
+        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal", "id_status"=>2])->all();
         
         $respuesta['status'] = "success";
         $respuesta['message'] = "Correos enviados correctamente";
