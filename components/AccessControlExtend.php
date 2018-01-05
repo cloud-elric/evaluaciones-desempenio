@@ -17,7 +17,15 @@ class AccessControlExtend extends AccessControl{
          if ($user !== false && $user->getIsGuest()) {
              $user->loginRequired();
          } else {
-            Yii::$app->response->redirect(\yii\helpers\Url::home());
+
+            if (Yii::$app->user->can('administrador')) {
+                Yii::$app->response->redirect(\yii\helpers\Url::home());
+            }else{
+                Yii::$app->response->redirect(['site/evaluacion']);
+            }
+
+            
+            
          }
      }
 }

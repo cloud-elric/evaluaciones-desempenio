@@ -1,0 +1,33 @@
+.soporteTxt {
+    font-size: .9rem;
+}
+
+.developer-link {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px 20px;
+}
+
+.developer-logo {
+    height: 50px;
+}
+
+.page-error .soporteTxt {
+    font-size: .9rem;
+}
+
+.page-error .developer-link {
+    color: #37474f;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 5px 20px;
+}
+
+.page-error .developer-logo {
+    height: 50px;
+}
+
+.page-error .page-copyright-inverse {
+    color: #37474f;
+}
