@@ -204,7 +204,7 @@ class AdminController extends Controller
 
     public function actionSendEmail(){
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->all();
+        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal", "id_status"=>2])->all();
         
         $respuesta['status'] = "success";
         $respuesta['message'] = "Correos enviados correctamente";
@@ -225,12 +225,12 @@ class AdminController extends Controller
         $promotionName= "Evaluaciones";
         
         $string = Yii::$app->mailer->render('render/sendEmailEvaluacion', ['url' =>$url, 'nombre'=>$name." ".$lastName ], 'layouts/html.php');
-        $subjectEmail = "Evaluación del desempeño 2017";
+        $subjectEmail = "Evaluación del desempeño 2018";
         $ch = curl_init ();
         
         curl_setopt ( $ch, CURLOPT_URL, "https://api.madmimi.com/mailer" );
         curl_setopt ( $ch, CURLOPT_POST, 1 );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, "username=".$username."&api_key=".$apiKey."&promotion_name=".$promotionName."&recipient=".$name." ".$lastName." <".$email.">&subject=".$subjectEmail."&from=development@2gom.com.mx&raw_html=".urlencode($string)  );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, "username=".$username."&api_key=".$apiKey."&promotion_name=".$promotionName."&recipient=".$name." ".$lastName." <".$email.">&subject=".$subjectEmail."&from=evaluaciones@2gom.com.mx&raw_html=".urlencode($string)  );
         
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
         
