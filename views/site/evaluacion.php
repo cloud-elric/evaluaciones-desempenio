@@ -31,7 +31,8 @@ $this->params['classBody'] = "page-login-v3 layout-full";
                 href="<?=$usuario->b_completado?"javascript:void(0)":Url::base()."/site/preguntas-usuario?token=".$empleadoCalificar->txt_token?>">
                 <div class="media">
                   <div class="pr-20">
-                    <?=$empleadoCalificar->nombreCompleto?>
+                    <?=$empleadoCalificar->nombreCompleto?><br>
+                    <small><?=$usuario->txt_tipo_evaluacion?></small>
                   </div>
                   <div class="media-body">
                     <div class="float-right">
