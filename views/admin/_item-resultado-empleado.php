@@ -115,7 +115,7 @@ $empleado = [
                     $vt = '';
                     
                     foreach($empleado["usuariosEvaluaran"] as $key=>$empleadoEvaluar){
-                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto."',";
+                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evaluacion."',";
                         $type .= "data0".$empleadoEvaluar->id_usuario .": 'line',";
                         $columns.="['data0".$empleadoEvaluar->id_usuario."', {data".$empleadoEvaluar->id_usuario."}],"; 
                         #$columns.="['data0".$empleadoEvaluar->id_usuario."', {data}],"; 
