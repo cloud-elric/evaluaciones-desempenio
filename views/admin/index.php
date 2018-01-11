@@ -1,6 +1,7 @@
 <?php
 
 use yii\web\View;
+use yii\helpers\Url;
 $this->title="Reporte por nivel";
 
 $this->params['classBody'] = "site-navbar-small dashboard-admin";
@@ -18,6 +19,16 @@ $this->registerJsFile(
 
 $this->registerJsFile(
   '@web/webAssets/templates/classic/global/vendor/c3/c3.min.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  'http://canvg.github.io/canvg/canvg.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
@@ -87,13 +98,15 @@ $this->registerCssFile(
         role="tabpanel">
         <div class="panel">
           <div class="panel-body">
-            <button class="btn btn-primary float-right" id="exportar-<?=$idArea?>">
+            <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$idArea?>">
+            <span class="ladda-label">
               <i class="icon oi-file-pdf" aria-hidden="true"></i>
               Exportar
+              </span>
             </button>
           </div>
         </div>
-        <div class="contenedor-<?=$idArea?>">
+        <div class="contenedor-<?=$idArea?>" id="contenedor-<?=$idArea?>">
             <?php
             foreach($resultado["cuestionarios"] as $cuestionario){
             ?>  
@@ -215,19 +228,34 @@ $this->registerCssFile(
             ?>
           </div>
         </div>
-
+        <div class="contenedor-iframe">
+          <iframe id='iframe<?=$idArea?>' style='display:none;'></iframe>
+        </div>  
         <?php
         $active = false;
 
         $this->registerJs(
           "$('#exportar-".$idArea."').on('click', function(){
-            var doc = new jsPDF();
+
+            var l = Ladda.create(this);
             
-            doc.fromHTML($('.contenedor-".$idArea."').html(), 15, 15, {
-              'width': 170,
-                  
-            });
-            doc.save('sample-file.pdf');
+            
+            html2canvas(document.querySelector('#contenedor-".$idArea."')).then(canvas => {
+              var dataURL = canvas.toDataURL();
+              var nombreReporte = 'Reporte nivel ".$resultado['nombre_nivel']."';
+              $.ajax({
+                url:'".Url::to('admin/generar-reporte-pdf')."?nombreReporte='+nombreReporte,
+                method: 'POST',
+                data: {data64:dataURL},
+                success: function(resp){
+                  var url = '".Url::to('admin/descargar-reporte-pdf')."?nombreArchivo='+resp+'&nombreReporte='+nombreReporte;
+                  document.getElementById('iframe".$idArea."').src = url;
+                  l.stop();
+                }
+              });
+          });
+
+            
           });",
           View::POS_READY,
           $idArea
