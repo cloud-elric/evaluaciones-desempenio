@@ -21,6 +21,21 @@ $this->registerJsFile(
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
+$this->registerJsFile(
+    'http://canvg.github.io/canvg/canvg.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    '@web/webAssets/plugins/jspdf/jspdf.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
@@ -99,8 +114,16 @@ $this->registerCssFile(
                                 
                                     ?>
                                 </div>
+                                <div class="col-md-8">
+                                    <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar">
+                                            <span class="ladda-label">
+                                                <i class="icon oi-file-pdf" aria-hidden="true"></i>
+                                                Exportar
+                                            </span>
+                                    </button>
+                                </div>
                             </div>
-                          
+                            <div id="contenedor">
                             <?php
                             Pjax::begin();  
                             echo ListView::widget([
@@ -126,6 +149,8 @@ $this->registerCssFile(
                            ]);
                            Pjax::end();
                             ?>
+
+                            </div>
                         </div>
                         
                     </div>
@@ -136,3 +161,34 @@ $this->registerCssFile(
     </div>
 </div>
 
+<?php
+$this->registerJs(
+    "$('#exportar').on('click', function(){
+
+    var l = Ladda.create(this);
+    
+    html2canvas(document.querySelector('#w1')).then(canvas => {
+        var dataURL = canvas.toDataURL();
+        var nombreReporte = 'Reporte por individuales';
+        $.ajax({
+        url:'".Url::to('generar-reporte-pdf')."?nombreReporte='+nombreReporte,
+        method: 'POST',
+        data: {data64:dataURL},
+        success: function(resp){
+            var url = '".Url::to('descargar-reporte-pdf')."?nombreArchivo='+resp+'&nombreReporte='+nombreReporte;
+            document.getElementById('iframe').src = url;
+            l.stop();
+        }
+        });
+    });
+
+    
+    });",
+    View::POS_READY,
+    "exportar"
+);
+?>
+</div>
+<div class="contenedor-iframe">
+<iframe id='iframe' style='display:none;'></iframe>
+</div> 
