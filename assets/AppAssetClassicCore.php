@@ -34,6 +34,7 @@ class AppAssetClassicCore extends AssetBundle
         "fonts/brand-icons/brand-icons.min.css",
         "fonts/7-stroke/7-stroke.css",
         'fonts/font-awesome/font-awesome.css',
+        'fonts/octicons/octicons.css',
         'http://fonts.googleapis.com/css?family=Roboto:300,400,500,300italic',
      
     ];
