@@ -355,7 +355,7 @@ class AdminController extends Controller
 
     public function actionGenerarReportePdf($nombreReporte='')
     {
-
+        ini_set('memory_limit', '-1');
         $nombreArchivo = uniqid();
         $nombreArchivoImage = $nombreArchivo.$this->extensionImage;
         $nombreArchivo = $nombreArchivo . $this->extensionPDF;
