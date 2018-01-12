@@ -1,3 +1,7 @@
+.page-content{
+    margin-top: 80px;
+}
+
 .preguntas-page .panel .panel-body{
     padding: 10px 40px 40px;
 
@@ -5,4 +9,44 @@
 
 .preguntas-page .panel .panel-body form{
     margin-top: 10px;
+}
+.banda{
+    position: fixed;
+    top:0;
+    left:0;
+    right: 0;
+    z-index: 2;
+}
+
+.banda .container-fluid{
+    
+}
+.container-fluid .row{
+    
+}
+
+.banda .navbar{
+    background:#ff2247;
+    border-radius: 0px;
+    padding: 1.5715rem 1.0715rem;
+    
+}
+.badge {
+    color:black;
+}
+
+
+
+.badge-warning{
+    background-color:#dcf700;
+    padding: 10px;
+}
+
+
+.navbar-brand{
+    padding:0px;
+}
+
+.banda .col-md-12{
+    color:white;
 }
