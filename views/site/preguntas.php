@@ -33,27 +33,34 @@ $this->registerCssFile(
     ['depends' => [\app\assets\AppAssetClassicTopBarBlank::className()]]
 );
 ?>
+<?php
+$this->params['extra'] ='<div class="banda">
+							<nav class="navbar navbar-inverse role="navigation">
+								<div class="container-fluid">
+									<div class="row">
+										<div class="col-md-12 text-center">
+											
+												Estas evaluando a: '.$usuarioEvaluar->nombreCompleto.' 
+												<span class="badge badge-warning">
+													'.$relacion->txt_tipo_evaluacion.'
+												</span>
+											
+											<a class="btn btn-success float-right hidden-md-down" href="'.Url::base().'/site/evaluacion">
+												<i class="icon wb-menu" aria-hidden="true"></i>
+												Mis evaluaciones
+											</a>
+											<a class="btn btn-success hidden-lg-up" href="'.Url::base().'/site/evaluacion">
+												<i class="icon wb-menu" aria-hidden="true"></i>
+												Mis evaluaciones
+											</a>
+											<br>
+										</div>
+										
+									</div>
+							</nav>
+						</div>';
 
-
-<div class="panel">
-	<div class="panel-heading">
-		<h3 class="panel-title">
-			Competencias
-		</h3>
-	</div>
-	<div class="panel-body">
-		<div class="brand">
-			<img class="brand-img mb-40" src="<?=Url::base()?>/webAssets/images/logo.png" alt="...">
-		</div>
-
-		<a href="<?=Url::base()?>/site/evaluacion" 
-		class="btn btn-primary ladda-button" ladda-style="zoom-in">
-			<span class="ladda-label">
-				Ir al inicio
-			</span>
-		</a>
-	</div>
-</div>
+?>
 
 <?php
 $i = 0;
