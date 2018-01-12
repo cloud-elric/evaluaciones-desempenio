@@ -126,6 +126,7 @@ class SiteController extends Controller
     {
         $usuario = Yii::$app->user->identity;
         $usuarioAEvaluar = EntUsuarios::find()->where(['txt_token' => $token])->one();
+        $relacion = RelUsuarioCuestionario::find()->where(['id_usuario' => $usuario->id_usuario, 'id_usuario_calificado'=>$usuarioAEvaluar->id_usuario])->one();
 
         $cuestionariosEvaluados = [];
         $cuestionariosCompletos = EntRespuestas::find()
@@ -143,7 +144,9 @@ class SiteController extends Controller
 
         return $this->render('preguntas', [
             'cuestionarios' => $cuestionarios,
-            'eva' => $token
+            'eva' => $token,
+            'usuarioEvaluar'=> $usuarioAEvaluar,
+            'relacion'=>$relacion
         ]);
     }
 
