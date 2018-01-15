@@ -13,3 +13,7 @@
 .pill-content > .active {
     height: auto;       
 }
+
+#mediaContent .panel-title{
+    padding-left: 0;
+}

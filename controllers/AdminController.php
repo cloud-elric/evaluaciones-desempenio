@@ -105,7 +105,8 @@ class AdminController extends Controller
                     'identificador' => $cuestionario->id_cuestionario . $nivel->id_nivel,
                     'preguntas' => $textoPreguntas,
                     'puntuacionPromedio' => $puntuacionPromedio,
-                    'promedioCuestionario' => $promedioCuestionario
+                    'promedioCuestionario' => $promedioCuestionario,
+                    'numEncuestados'=>count($respuestas),
                 ];
             }
 
@@ -164,8 +165,8 @@ class AdminController extends Controller
                 'nombre_cuestionario' => $cuestionario->txt_nombre,
                 'identificador' => $cuestionario->id_cuestionario,
                 'preguntas' => $preguntas,
-                'promedioTotal' => $promedioTotal
-
+                'promedioTotal' => $promedioTotal,
+                'numeroEncuestados'=> count($cuestionario->entRespuestas)
             ];
         }
 
@@ -335,6 +336,7 @@ class AdminController extends Controller
                         'preguntas' => $preguntaTexto,
                         'promedioTotal' => $promedioTotal,
                         'identificador' => $area->id_area . $cuestionario->id_cuestionario . $respuesta->id_respuesta,
+                        'numeroEncuestados'=>count($respuestas)
                     ];
                 }
 
@@ -386,7 +388,7 @@ class AdminController extends Controller
                 $pdf->Image($pathImagen, 0, 100, ($width), ($height));
                 $pdf->Output('F', $path);         
                 //  delete image server         
-                $this->borrarArchivoTemporal($pathImagen);     
+                //$this->borrarArchivoTemporal($pathImagen);     
             } 
         }
        

@@ -37,6 +37,16 @@ $this->registerJsFile(
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
+$this->registerJsFile(
+  '@web/webAssets/plugins/html2pdf/html2pdf.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  '@web/webAssets/plugins/xepOnline/jqPlugin.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
@@ -96,25 +106,33 @@ $this->registerCssFile(
 
         <div class="tab-pane <?=$active?'active':''?> animation-slide-left" id="nivel-<?=$idArea?>"
         role="tabpanel">
-        <div class="panel">
-          <div class="panel-body">
-            <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$idArea?>">
-            <span class="ladda-label">
-              <i class="icon oi-file-pdf" aria-hidden="true"></i>
-              Exportar
-              </span>
-            </button>
-          </div>
-        </div>
+        
         <div class="contenedor-<?=$idArea?>" id="contenedor-<?=$idArea?>">
             <?php
             foreach($resultado["cuestionarios"] as $cuestionario){
             ?>  
+
+            <div class="panel">
+              <div class="panel-body">
+                <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$cuestionario["identificador"]?>">
+                <span class="ladda-label">
+                  <i class="icon oi-file-pdf" aria-hidden="true"></i>
+                  Exportar
+                  </span>
+                </button>
+              </div>
+            </div>
+
+
+
             <div class="panel">
               <div class="panel-body">
 
-                <section>
+                <section id="container-export-<?=$cuestionario["identificador"]?>">
                   <h6 class="panel-title">
+                    <small>
+                    Número de encuestados totales: <?=$cuestionario["numEncuestados"]?>
+                    </small><br>
                     <?=$cuestionario["nombre_cuestionario"]?><br>
                     <small>
                     <?=$cuestionario["promedioCuestionario"]?>
@@ -162,7 +180,18 @@ $this->registerCssFile(
 
                       <?php
                       $this->registerJs(
-                        "var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
+                        "
+                        $('#exportar-".$cuestionario["identificador"]."').on('click', function(){
+                          var l = Ladda.create(this);
+      
+                          xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."');
+                          l.stop();
+                          return false;
+                     
+                                 
+                        });
+                        
+                        var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
                           bindto: '#chart".$cuestionario["identificador"]."',
                           data: {
                             x: 'x',
@@ -213,7 +242,10 @@ $this->registerCssFile(
                               show: true
                             }
                           }
-                        });",
+                        });
+                        
+                        $('svg').attr('xmlns','http://www.w3.org/2000/svg');
+                        ",
                         View::POS_READY,
                         $cuestionario["identificador"]
                       );
@@ -234,32 +266,7 @@ $this->registerCssFile(
         <?php
         $active = false;
 
-        $this->registerJs(
-          "$('#exportar-".$idArea."').on('click', function(){
-
-            var l = Ladda.create(this);
-            
-            
-            html2canvas(document.querySelector('#contenedor-".$idArea."')).then(canvas => {
-              var dataURL = canvas.toDataURL();
-              var nombreReporte = 'Reporte nivel ".$resultado['nombre_nivel']."';
-              $.ajax({
-                url:'".Url::to('admin/generar-reporte-pdf')."?nombreReporte='+nombreReporte,
-                method: 'POST',
-                data: {data64:dataURL},
-                success: function(resp){
-                  var url = '".Url::to('admin/descargar-reporte-pdf')."?nombreArchivo='+resp+'&nombreReporte='+nombreReporte;
-                  document.getElementById('iframe".$idArea."').src = url;
-                  l.stop();
-                }
-              });
-          });
-
-            
-          });",
-          View::POS_READY,
-          $idArea
-        );
+        
 
         }
         ?>
