@@ -85,7 +85,7 @@ $this->registerCssFile(
         foreach($resultados as $idArea=>$resultado){
         ?>
 
-        <div class="tab-pane <?=$active?'active':''?> animation-slide-left" id="area-<?=$index?>"
+        <div class="tab-pane <?=$active?'active':''?> animation-slide-left" id="area-<?=$idArea?>"
         role="tabpanel">
 
           <div class="panel">
@@ -107,6 +107,9 @@ $this->registerCssFile(
 
                 <section>
                   <h6 class="panel-title">
+                    <small>
+                        Número de encuestados totales:<?=$cuestionario["numeroEncuestados"]?>
+                    </small><br>
                     <?=$cuestionario["cuestionarioNombre"]?><br>
                     <small>
                     <?=round($cuestionario["promedioTotal"], 1)?>

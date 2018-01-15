@@ -74,6 +74,9 @@ $this->registerCssFile(
 
                                     <section>
                                         <h6 class="panel-title">
+                                            <small>
+                                                Número de encuestados totales:<?=$cuestionario["numeroEncuestados"]?>
+                                            </small><br>
                                             <?=$cuestionario["nombre_cuestionario"]?><br>
                                             <small>
                                             <?=round($cuestionario["promedioTotal"], 1)?>
