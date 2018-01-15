@@ -22,19 +22,9 @@ $this->registerJsFile(
 );
 
 $this->registerJsFile(
-    'http://canvg.github.io/canvg/canvg.js',
+    '@web/webAssets/plugins/xepOnline/jqPlugin.js',
     ['depends' => [\app\assets\AppAsset::className()]]
-  );
-  
-  $this->registerJsFile(
-    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js',
-    ['depends' => [\app\assets\AppAsset::className()]]
-  );
-  
-  $this->registerJsFile(
-    '@web/webAssets/plugins/jspdf/jspdf.js',
-    ['depends' => [\app\assets\AppAsset::className()]]
-  );
+);
 
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
@@ -114,14 +104,7 @@ $this->registerCssFile(
                                 
                                     ?>
                                 </div>
-                                <div class="col-md-8">
-                                    <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar">
-                                            <span class="ladda-label">
-                                                <i class="icon oi-file-pdf" aria-hidden="true"></i>
-                                                Exportar
-                                            </span>
-                                    </button>
-                                </div>
+                                
                             </div>
                             <div id="contenedor">
                             <?php
@@ -163,27 +146,28 @@ $this->registerCssFile(
 
 <?php
 $this->registerJs(
-    "$('#exportar').on('click', function(){
+    // "$('#exportar').on('click', function(){
 
-    var l = Ladda.create(this);
+    // var l = Ladda.create(this);
     
-    html2canvas(document.querySelector('#w1')).then(canvas => {
-        var dataURL = canvas.toDataURL();
-        var nombreReporte = 'Reporte por individuales';
-        $.ajax({
-        url:'".Url::to('generar-reporte-pdf')."?nombreReporte='+nombreReporte,
-        method: 'POST',
-        data: {data64:dataURL},
-        success: function(resp){
-            var url = '".Url::to('descargar-reporte-pdf')."?nombreArchivo='+resp+'&nombreReporte='+nombreReporte;
-            document.getElementById('iframe').src = url;
-            l.stop();
-        }
-        });
-    });
+    // html2canvas(document.querySelector('#w1')).then(canvas => {
+    //     var dataURL = canvas.toDataURL();
+    //     var nombreReporte = 'Reporte por individuales';
+    //     $.ajax({
+    //     url:'".Url::to('generar-reporte-pdf')."?nombreReporte='+nombreReporte,
+    //     method: 'POST',
+    //     data: {data64:dataURL},
+    //     success: function(resp){
+    //         var url = '".Url::to('descargar-reporte-pdf')."?nombreArchivo='+resp+'&nombreReporte='+nombreReporte;
+    //         document.getElementById('iframe').src = url;
+    //         l.stop();
+    //     }
+    //     });
+    // });
 
     
-    });",
+    //});",
+    "",
     View::POS_READY,
     "exportar"
 );

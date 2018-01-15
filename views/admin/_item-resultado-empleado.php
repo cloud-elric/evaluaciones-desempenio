@@ -91,9 +91,16 @@ $empleado = [
     //'totalEmpleado'=>$totalEmpleado
 ];
 ?>
+          
 <div class="panel">
     <div class="panel-body">
-        <section>
+        <button class="btn btn-primary float-right" data-style="zoom-in" id="exportar-<?=$model->id_usuario?>">
+            <span class="ladda-label">
+                <i class="icon oi-file-pdf" aria-hidden="true"></i>
+                Exportar
+            </span>
+        </button>
+        <section id="container-export-<?=$model->id_usuario?>">
             <h6 class="panel-title">
                 <?= $empleado["nombre"] ?><br>
                 <small>
@@ -183,6 +190,23 @@ $empleado = [
                     ?>
                     <script>
                         $(document).ready(function(){
+
+                            $('#exportar-<?=$model->id_usuario?>').on('click', function(){
+                                var l = Ladda.create(this);
+            
+                                xepOnline.Formatter.Format('container-export-<?=$model->id_usuario?>',
+                                    {
+                                        filename: 'Reporte <?=$model->nombreCompleto?>',
+                                        render: 'download'
+                                    });
+                                l.stop();
+                                return false;
+                           
+                                       
+                              });
+
+
+
                             var simple_line_chart<?=$index?> = c3.generate({
                                 bindto: '#chart<?=$index?>',
                                 data: {
@@ -254,7 +278,22 @@ $empleado = [
                     }else{
 
                         $this->registerJs(
-                            "var simple_line_chart" . $index . " = c3.generate({
+                            "
+                            $('#exportar-".$model->id_usuario."').on('click', function(){
+                                var l = Ladda.create(this);
+            
+                                xepOnline.Formatter.Format('container-export-".$model->id_usuario."',
+                                {
+                                    filename: 'Reporte ".$model->nombreCompleto."',
+                                    render: 'download'
+                                });
+                                l.stop();
+                                return false;
+                           
+                                       
+                              });
+                            
+                            var simple_line_chart" . $index . " = c3.generate({
                             bindto: '#chart" . $index . "',
                             data: {
                             x: 'x',
@@ -314,7 +353,9 @@ $empleado = [
                                 show: true
                             }
                             }
-                        });",
+                        });
+                        $('svg').attr('xmlns','http://www.w3.org/2000/svg');
+                        ",
                             View::POS_END,
                             $index
                         );

@@ -97,6 +97,6 @@ $(document).ready(function() {
   
   // Lanza la animación siempre que se cambie las pantallas
   window.onbeforeunload = function(){
-    $('.animsition').animsition('out', $('.animsition'), '');
+    //$('.animsition').animsition('out', $('.animsition'), '');
   }
   
