@@ -167,7 +167,6 @@ $this->registerCssFile(
                           </p>
                         </div>
                       </div>
-                      
                       <?php
                       }
                       ?>
