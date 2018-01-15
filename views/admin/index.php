@@ -23,26 +23,6 @@ $this->registerJsFile(
 );
 
 $this->registerJsFile(
-  'http://canvg.github.io/canvg/canvg.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/plugins/jspdf/jspdf.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/plugins/html2pdf/html2pdf.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
   '@web/webAssets/plugins/xepOnline/jqPlugin.js',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
@@ -114,26 +94,18 @@ $this->registerCssFile(
 
             <div class="panel">
               <div class="panel-body">
-                <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$cuestionario["identificador"]?>">
+              <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$cuestionario["identificador"]?>">
                 <span class="ladda-label">
                   <i class="icon oi-file-pdf" aria-hidden="true"></i>
                   Exportar
                   </span>
                 </button>
-              </div>
-            </div>
-
-
-
-            <div class="panel">
-              <div class="panel-body">
-
                 <section id="container-export-<?=$cuestionario["identificador"]?>">
                   <h6 class="panel-title">
                     <small>
                     Número de encuestados totales: <?=$cuestionario["numEncuestados"]?>
                     </small><br>
-                    <?=$cuestionario["nombre_cuestionario"]?><br>
+                    Nivel <?=$resultado['nombre_nivel']?> - <?=$cuestionario["nombre_cuestionario"]?><br>
                     <small>
                     <?=$cuestionario["promedioCuestionario"]?>
                     </small>
@@ -183,7 +155,11 @@ $this->registerCssFile(
                         $('#exportar-".$cuestionario["identificador"]."').on('click', function(){
                           var l = Ladda.create(this);
       
-                          xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."');
+                          xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."', 
+                            {
+                              filename: 'Reporte nivel ".$resultado['nombre_nivel']." - ".$cuestionario["nombre_cuestionario"]."',
+                              render: 'download'
+                            });
                           l.stop();
                           return false;
                      
