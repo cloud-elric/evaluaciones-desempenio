@@ -331,14 +331,16 @@ class AdminController extends Controller
                     if ($numPreguntas > 0) {
                         $promedioTotal = $promedioTotal / $numPreguntas;
                     }
-                    $cuestionariosArea[] = [
-                        'cuestionarioNombre' => $cuestionario->txt_nombre,
-                        'preguntas' => $preguntaTexto,
-                        'promedioTotal' => $promedioTotal,
-                        'identificador' => $area->id_area . $cuestionario->id_cuestionario . $respuesta->id_respuesta,
-                        'numeroEncuestados'=>count($respuestas)
-                    ];
+                    
                 }
+
+                $cuestionariosArea[] = [
+                    'cuestionarioNombre' => $cuestionario->txt_nombre,
+                    'preguntas' => $preguntaTexto,
+                    'promedioTotal' => $promedioTotal,
+                    'identificador' => $area->id_area . $cuestionario->id_cuestionario . $respuesta->id_respuesta,
+                    'numeroEncuestados'=>count($respuestas)
+                ];
 
             }
 
