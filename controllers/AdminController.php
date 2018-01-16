@@ -304,10 +304,11 @@ class AdminController extends Controller
                 $promedioTotal = 0;
                 $numPreguntas = 0;
 
+                $preguntaTexto = [];
                 foreach ($respuestas as $respuesta) {
                     $preguntas = $respuesta->idCuestionario->entPreguntas;
                     $numPreguntas = count($preguntas);
-                    $preguntaTexto = [];
+                    
                     $respuestasValores = $respuesta->relUsuarioRespuestas;
 
                     $promedio = 0;
