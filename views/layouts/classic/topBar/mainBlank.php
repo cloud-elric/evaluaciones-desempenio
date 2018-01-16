@@ -20,7 +20,7 @@ AppAssetClassicTopBarBlank::register($this);
     <![endif]-->
   <?php $this->beginBody();?>
   
-
+  <?=isset($this->params['extra'])?$this->params['extra']:''?>
   <div class="page vertical-align text-center" data-animsition-in="fade-in" data-animsition-out="fade-out">
     <div class="page-content vertical-align-middle animation-slide-top animation-duration-1">
       <?=$content?>

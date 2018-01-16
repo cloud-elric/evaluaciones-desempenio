@@ -12,10 +12,15 @@ use yii\web\Response;
 use app\models\EntCuestionario;
 use app\models\EntRespuestas;
 use yii\data\ActiveDataProvider;
+use app\components\FPDF\PDF;
 
 
 class AdminController extends Controller
 {
+
+    public $pathArchivosTemporales = "temporales/";
+    public $extensionPDF = ".pdf";
+    public $extensionImage = ".png";
     /**
      * @inheritdoc
      */
@@ -36,77 +41,79 @@ class AdminController extends Controller
             ],
         ];
     }
-    
 
-    public function actionIndex(){    
+
+    public function actionIndex()
+    {    
         #Yii::$app->response->format = Response::FORMAT_JSON;
-        $niveles = CatNiveles::find()->where(["b_habilitado"=>1])->all();
+        $niveles = CatNiveles::find()->where(["b_habilitado" => 1])->all();
         $resultados = [];
-        foreach($niveles as $nivel){
-            
+        foreach ($niveles as $nivel) {
+
             $cuestionariosNivel = $nivel->relCuestionarioNiveles;
 
             $nombreCuestionarios = [];
             $puntuacionPromedio = 0;
-            foreach($cuestionariosNivel as $cuestionarioNivel){
+            foreach ($cuestionariosNivel as $cuestionarioNivel) {
                 $cuestionario = $cuestionarioNivel->idCuestionario;
                 $preguntas = $cuestionario->entPreguntas;
                 $respuestas = $cuestionario->getEntRespuestasByNivel($nivel->id_nivel)->all();
                 $puntuacionPromedio = $cuestionarioNivel->num_puntuacion;
 
                 $respuestasUsuarios = [];
-                foreach($respuestas as $respuesta){
+                foreach ($respuestas as $respuesta) {
                     $respuestasUsuarios = $respuesta->relUsuarioRespuestas;
 
                 }
 
                 $textoPreguntas = [];
                 $promedioCuestionario = 0;
-                foreach($preguntas as $pregunta){
-                    $respuestasValores=[];
+                foreach ($preguntas as $pregunta) {
+                    $respuestasValores = [];
                     $promedio = 0;
                     $total = 0;
                     $numPreguntas = 0;
-                    foreach($respuestasUsuarios as $respuestaUsuario){
-                        if($respuestaUsuario->id_pregunta == $pregunta->id_pregunta){
+                    foreach ($respuestasUsuarios as $respuestaUsuario) {
+                        if ($respuestaUsuario->id_pregunta == $pregunta->id_pregunta) {
                             $numPreguntas++;
                             $total += $respuestaUsuario->txt_valor;
                         }
-                        
+
                     }
 
-                    if($numPreguntas>0){
-                        $promedio = $total/$numPreguntas;
+                    if ($numPreguntas > 0) {
+                        $promedio = $total / $numPreguntas;
                     }
                     $promedioCuestionario += $promedio;
 
                     $textoPreguntas[] = [
-                        'texto_pregunta'=>$pregunta->txt_pregunta,
-                        'promedio'=>$promedio,
-                        'total'=>$total,
-                        'numPreguntas'=>$numPreguntas
-                        
+                        'texto_pregunta' => $pregunta->txt_pregunta,
+                        'promedio' => $promedio,
+                        'total' => $total,
+                        'numPreguntas' => $numPreguntas
+
                     ];
                 }
 
-                 if(count($preguntas) > 0){
+                if (count($preguntas) > 0) {
                     $promedioCuestionario = round(($promedioCuestionario / count($preguntas)), 1);
-                 }
+                }
 
                 $nombreCuestionarios[] = [
-                    'nombre_cuestionario' =>$cuestionario->txt_nombre,
-                    'identificador'=>$cuestionario->id_cuestionario.$nivel->id_nivel,
-                    'preguntas'=>$textoPreguntas,
-                    'puntuacionPromedio'=>$puntuacionPromedio,
-                    'promedioCuestionario'=>$promedioCuestionario
+                    'nombre_cuestionario' => $cuestionario->txt_nombre,
+                    'identificador' => $cuestionario->id_cuestionario . $nivel->id_nivel,
+                    'preguntas' => $textoPreguntas,
+                    'puntuacionPromedio' => $puntuacionPromedio,
+                    'promedioCuestionario' => $promedioCuestionario,
+                    'numEncuestados'=>count($respuestas),
                 ];
             }
 
 
             $resultados[$nivel->id_nivel] = [
-                'nombre_nivel'=>$nivel->txt_nombre,
-                'cuestionarios'=>$nombreCuestionarios,
-                
+                'nombre_nivel' => $nivel->txt_nombre,
+                'cuestionarios' => $nombreCuestionarios,
+
             ];
         }
 
@@ -114,83 +121,86 @@ class AdminController extends Controller
 
         // exit;
 
-        return $this->render("index", ["resultados"=>$resultados]);
+        return $this->render("index", ["resultados" => $resultados]);
     }
-    
-    public function actionResultadosPorCompetencias(){
+
+    public function actionResultadosPorCompetencias()
+    {
         //Yii::$app->response->format = Response::FORMAT_JSON;
         $resultados = [];
         $cuestionarios = EntCuestionario::find()->all();
 
-        foreach($cuestionarios as $cuestionario){
+        foreach ($cuestionarios as $cuestionario) {
             $preguntasRel = $cuestionario->entPreguntas;
             $preguntas = [];
             $promedioTotal = 0;
-            foreach($preguntasRel as $preguntaRel){
+            foreach ($preguntasRel as $preguntaRel) {
                 $respuestasRel = $preguntaRel->relUsuarioRespuestas;
 
                 $promedio = 0;
                 $total = 0;
                 $numPreguntas = count($respuestasRel);
-                foreach($respuestasRel as $respuestaRel){
-                    $total +=$respuestaRel->txt_valor;
+                foreach ($respuestasRel as $respuestaRel) {
+                    $total += $respuestaRel->txt_valor;
                 }
-                
-                if($numPreguntas>0){
-                    $promedio = $total/$numPreguntas;
-                }
-                
-                $promedioTotal += $promedio;
-                $preguntas[]=[
-                    'texto_pregunta'=>$preguntaRel->txt_pregunta,
-                    'promedio'=>round($promedio, 1),
-                    'total'=>$total,
-                ];
-            } 
 
-            if(count($preguntasRel)>0){
+                if ($numPreguntas > 0) {
+                    $promedio = $total / $numPreguntas;
+                }
+
+                $promedioTotal += $promedio;
+                $preguntas[] = [
+                    'texto_pregunta' => $preguntaRel->txt_pregunta,
+                    'promedio' => round($promedio, 1),
+                    'total' => $total,
+                ];
+            }
+
+            if (count($preguntasRel) > 0) {
                 $promedioTotal = $promedioTotal / count($preguntasRel);
             }
 
-            $resultados[$cuestionario->id_cuestionario]=[
-                'nombre_cuestionario'=>$cuestionario->txt_nombre,
-                'identificador'=>$cuestionario->id_cuestionario,
-                'preguntas'=>$preguntas,
-                'promedioTotal'=>$promedioTotal
-
+            $resultados[$cuestionario->id_cuestionario] = [
+                'nombre_cuestionario' => $cuestionario->txt_nombre,
+                'identificador' => $cuestionario->id_cuestionario,
+                'preguntas' => $preguntas,
+                'promedioTotal' => $promedioTotal,
+                'numeroEncuestados'=> count($cuestionario->entRespuestas)
             ];
         }
 
-        return $this->render("resultados-por-competencia", ["resultados"=>$resultados]);
+        return $this->render("resultados-por-competencia", ["resultados" => $resultados]);
     }
 
-    public function actionAddUsersToList(){
-        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"])->all();
+    public function actionAddUsersToList()
+    {
+        $users = EntUsuarios::find()->where(['txt_auth_item' => "usuario-normal"])->all();
 
-        foreach($users as $user){
+        foreach ($users as $user) {
             $this->addUserToList($user->txt_email, $user->txt_username, $user->txt_apellido_paterno);
         }
 
         exit;
-        
+
     }
 
-    public function addUserToList($email, $firstName, $lastName){
-        $username = Yii::$app->params ['madMimi'] ['username'];
-        $apiKey = Yii::$app->params ['madMimi'] ['api_key'];
-        $list = Yii::$app->params ['madMimi'] ['list_default'];
+    public function addUserToList($email, $firstName, $lastName)
+    {
+        $username = Yii::$app->params['madMimi']['username'];
+        $apiKey = Yii::$app->params['madMimi']['api_key'];
+        $list = Yii::$app->params['madMimi']['list_default'];
 
-        $ch = curl_init ();
-        
-        curl_setopt ( $ch, CURLOPT_URL, "https://api.madmimi.com/audience_lists/".$list."/add" );
-        curl_setopt ( $ch, CURLOPT_POST, 1 );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, "username=".$username."&api_key=".$apiKey."&email=".$email."&first_name=".$firstName."&last_name=".$lastName  );
-        
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        
-        $server_output = curl_exec ( $ch );
-        
-        curl_close ( $ch );
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://api.madmimi.com/audience_lists/" . $list . "/add");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "username=" . $username . "&api_key=" . $apiKey . "&email=" . $email . "&first_name=" . $firstName . "&last_name=" . $lastName);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec($ch);
+
+        curl_close($ch);
         echo $server_output;
         // further processing ....
         if ($server_output == "OK") {
@@ -198,44 +208,46 @@ class AdminController extends Controller
         } else {
         }
 
-        
+
     }
 
-    public function actionSendEmail(){
+    public function actionSendEmail()
+    {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $users = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal", "id_status"=>2])->all();
-        
+        $users = EntUsuarios::find()->where(['txt_auth_item' => "usuario-normal", "id_status" => 2])->all();
+
         $respuesta['status'] = "success";
         $respuesta['message'] = "Correos enviados correctamente";
-        foreach($users as $user){
-            $url = Yii::$app->urlManager->createAbsoluteUrl ( [
-                'site/iniciar-evaluacion?token='.$user->txt_token
-            ] );
-            
-            $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno,  $user->txt_email);
+        foreach ($users as $user) {
+            $url = Yii::$app->urlManager->createAbsoluteUrl([
+                'site/iniciar-evaluacion?token=' . $user->txt_token
+            ]);
+
+            $this->sendEmailMadMimi($url, $user->txt_username, $user->txt_apellido_paterno, $user->txt_email);
         }
 
         return $respuesta;
     }
 
-    public function sendEmailMadMimi($url, $name, $lastName, $email){
-        $username = Yii::$app->params ['madMimi'] ['username'];
-        $apiKey = Yii::$app->params ['madMimi'] ['api_key'];
-        $promotionName= "Evaluaciones";
-        
-        $string = Yii::$app->mailer->render('render/sendEmailEvaluacion', ['url' =>$url, 'nombre'=>$name." ".$lastName ], 'layouts/html.php');
+    public function sendEmailMadMimi($url, $name, $lastName, $email)
+    {
+        $username = Yii::$app->params['madMimi']['username'];
+        $apiKey = Yii::$app->params['madMimi']['api_key'];
+        $promotionName = "Evaluaciones";
+
+        $string = Yii::$app->mailer->render('render/sendEmailEvaluacion', ['url' => $url, 'nombre' => $name . " " . $lastName], 'layouts/html.php');
         $subjectEmail = "Evaluación del desempeño 2018";
-        $ch = curl_init ();
-        
-        curl_setopt ( $ch, CURLOPT_URL, "https://api.madmimi.com/mailer" );
-        curl_setopt ( $ch, CURLOPT_POST, 1 );
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, "username=".$username."&api_key=".$apiKey."&promotion_name=".$promotionName."&recipient=".$name." ".$lastName." <".$email.">&subject=".$subjectEmail."&from=evaluaciones@2gom.com.mx&raw_html=".urlencode($string)  );
-        
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        
-        $server_output = curl_exec ( $ch );
-        
-        curl_close ( $ch );
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, "https://api.madmimi.com/mailer");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "username=" . $username . "&api_key=" . $apiKey . "&promotion_name=" . $promotionName . "&recipient=" . $name . " " . $lastName . " <" . $email . ">&subject=" . $subjectEmail . "&from=evaluaciones@2gom.com.mx&raw_html=" . urlencode($string));
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $server_output = curl_exec($ch);
+
+        curl_close($ch);
         //echo $server_output;
         // further processing ....
         if ($server_output == "OK") {
@@ -243,53 +255,55 @@ class AdminController extends Controller
         }
     }
 
-    public function actionResultadosPorEmpleados($us=null){
+    public function actionResultadosPorEmpleados($us = null)
+    {
         #Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if(!$us){
-            $empleados = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal"]);
-        }else{
-            $empleados = EntUsuarios::find()->where(['txt_auth_item'=>"usuario-normal", "id_usuario"=>$us]);
-        }    
-       
+        if (!$us) {
+            $empleados = EntUsuarios::find()->where(['txt_auth_item' => "usuario-normal"]);
+        } else {
+            $empleados = EntUsuarios::find()->where(['txt_auth_item' => "usuario-normal", "id_usuario" => $us]);
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => $empleados,
-             'pagination'=>[
-                 'pageSize' =>30,
-             ],
+            'pagination' => [
+                'pageSize' => 30,
+            ],
             'sort' => [
                 'defaultOrder' => [
                     'txt_username' => \SORT_ASC,
-                    'txt_apellido_paterno'=> \SORT_ASC,
+                    'txt_apellido_paterno' => \SORT_ASC,
                 ]
             ],
-            
+
         ]);
 
         #return $resultados;
-        return $this->render("resultados-por-empleados", ['dataProvider'=>$dataProvider]);
+        return $this->render("resultados-por-empleados", ['dataProvider' => $dataProvider]);
     }
 
-    public function actionResultadosPorArea(){
+    public function actionResultadosPorArea()
+    {
          #Yii::$app->response->format = Response::FORMAT_JSON;
-         $areas = CatAreas::find()->where(["b_habilitado"=>1])->all();
-         $cuestionarios = EntCuestionario::find()->all();
-         
-         $resultados = [];
-         
-         foreach($areas as $area){
+        $areas = CatAreas::find()->where(["b_habilitado" => 1])->all();
+        $cuestionarios = EntCuestionario::find()->all();
+
+        $resultados = [];
+
+        foreach ($areas as $area) {
             $respuestas = [];
             $cuestionariosArea = [];
-            
-            foreach($cuestionarios as $cuestionario){
+
+            foreach ($cuestionarios as $cuestionario) {
                 $respuestas = EntRespuestas::find()
-                    ->where(['id_area'=>$area->id_area, 'id_cuestionario'=>$cuestionario->id_cuestionario])
+                    ->where(['id_area' => $area->id_area, 'id_cuestionario' => $cuestionario->id_cuestionario])
                     ->all();
 
                 $promedioTotal = 0;
-                $numPreguntas = 0;    
+                $numPreguntas = 0;
 
-                foreach($respuestas as $respuesta){
+                foreach ($respuestas as $respuesta) {
                     $preguntas = $respuesta->idCuestionario->entPreguntas;
                     $numPreguntas = count($preguntas);
                     $preguntaTexto = [];
@@ -298,47 +312,102 @@ class AdminController extends Controller
                     $promedio = 0;
                     $total = 0;
                     $numRespuesta = 0;
-                    foreach($preguntas as $pregunta){
-                        foreach($respuestasValores as $respuestaValor){
-                            if($respuestaValor->id_pregunta==$pregunta->id_pregunta){
+                    foreach ($preguntas as $pregunta) {
+                        foreach ($respuestasValores as $respuestaValor) {
+                            if ($respuestaValor->id_pregunta == $pregunta->id_pregunta) {
                                 $numRespuesta++;
-                                $total +=$respuestaValor->txt_valor;
+                                $total += $respuestaValor->txt_valor;
                             }
                         }
-                        $promedio = $total/$numRespuesta;
+                        $promedio = $total / $numRespuesta;
                         $promedioTotal += $promedio;
                         $preguntaTexto[] = [
-                            'textoPregunta'=>$pregunta->txt_pregunta,
-                            'promedio'=>round($promedio, 1),
+                            'textoPregunta' => $pregunta->txt_pregunta,
+                            'promedio' => round($promedio, 1),
                         ];
                     }
 
-                    if($numPreguntas>0){
-                        $promedioTotal = $promedioTotal/$numPreguntas;
+                    if ($numPreguntas > 0) {
+                        $promedioTotal = $promedioTotal / $numPreguntas;
                     }
-                    $cuestionariosArea[] = [
-                        'cuestionarioNombre'=>$cuestionario->txt_nombre,
-                        'preguntas'=>$preguntaTexto,
-                        'promedioTotal'=>$promedioTotal,
-                        'identificador'=>$area->id_area.$cuestionario->id_cuestionario.$respuesta->id_respuesta,
-                    ];
-                }    
+                    
+                }
+
+                $cuestionariosArea[] = [
+                    'cuestionarioNombre' => $cuestionario->txt_nombre,
+                    'preguntas' => $preguntaTexto,
+                    'promedioTotal' => $promedioTotal,
+                    'identificador' => $area->id_area . $cuestionario->id_cuestionario . $respuesta->id_respuesta,
+                    'numeroEncuestados'=>count($respuestas)
+                ];
 
             }
 
-             $resultados[$area->id_area] = [
-                'nombreArea'=>$area->txt_nombre = $area->txt_nombre,
-                'cuestionarios'=>$cuestionariosArea,
-                
-             ];
-             
-         }
+            $resultados[$area->id_area] = [
+                'nombreArea' => $area->txt_nombre = $area->txt_nombre,
+                'cuestionarios' => $cuestionariosArea,
+
+            ];
+
+        }
  
           #return $resultados;
         #return $this->redirect(["site/construccion"]);
-        return $this->render("resultados-por-areas", ['resultados'=>$resultados]);
+        return $this->render("resultados-por-areas", ['resultados' => $resultados]);
     }
 
-    
+    public function actionGenerarReportePdf($nombreReporte='')
+    {
+        ini_set('memory_limit', '-1');
+        $nombreArchivo = uniqid();
+        $nombreArchivoImage = $nombreArchivo.$this->extensionImage;
+        $nombreArchivo = $nombreArchivo . $this->extensionPDF;
+        $path = $this->pathArchivosTemporales . $nombreArchivo;
+        $pathImagen = $this->pathArchivosTemporales . $nombreArchivoImage;
+        //print_r($_POST);
+        ob_start();
+
+        // $pdf = new FPDF();
+        // $pdf->AddPage();
+        // $pdf->SetFont('Arial', 'B', 16);
+        // $pdf->Cell(40, 10, '¡Hola, Mundo!');
+
+        $datauri    = $_POST['data64']; 
+        $datapieces = explode(',',$datauri); 
+        $encodedimg = $datapieces[1]; 
+        $decodedimg = base64_decode($encodedimg);  
+        //  check if image decoded 
+        if( $decodedimg!==false ) {     
+            //  save image temporary location     
+            if( file_put_contents($pathImagen,$decodedimg)!==false )     { 
+                list($width, $height) = getimagesize($pathImagen);
+                
+                //  open new pdf document , print image         
+                $pdf = new PDF('P', 'mm',[$width, $height+100] );  
+                $pdf->headerText = $nombreReporte;
+                $pdf->Addpage();         
+                $pdf->Image($pathImagen, 0, 100, ($width), ($height));
+                $pdf->Output('F', $path);         
+                //  delete image server         
+                //$this->borrarArchivoTemporal($pathImagen);     
+            } 
+        }
+       
+        ob_end_flush();
+
+        return $nombreArchivo;
+    }
+
+    public function actionDescargarReportePdf($nombreArchivo, $nombreReporte=null)
+    {
+
+        $path = $this->pathArchivosTemporales . $nombreArchivo;
+        return \Yii::$app->response->sendFile($path, $nombreReporte.".pdf");
+    }
+
+    private function borrarArchivoTemporal($nombreArchivo)
+    {
+        unlink($nombreArchivo);
+    }
 
 }

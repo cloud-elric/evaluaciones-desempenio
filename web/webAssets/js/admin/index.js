@@ -37,3 +37,7 @@ $(document).ready(function(){
 
 });
 
+$(document).ajaxStop(function(e) {
+    console.log(e);
+  });
+
