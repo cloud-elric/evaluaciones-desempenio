@@ -10,7 +10,7 @@ $(document).ready(function(){
         $.ajax({
             url: baseUrl+"admin/send-email",
             success:function(resp){
-                if(resp.status="success"){
+                if(resp.status=="success"){
                     $(".alert.alert-success").addClass("d-block");
                     $("#js-enviar-email .ladda-label").html("Evaluaciones enviadas exitosamente <i class='icon fa-check' aria-hidden='true'></i>");
 

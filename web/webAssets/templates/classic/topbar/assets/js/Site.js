@@ -252,7 +252,7 @@
         // let loadingType = 'default';
         $BODY.animsition({
           inClass: 'fade-in',
-          linkElement:'a:not([class="no-redirect"]):not([target="_blank"]):not([href^="#"])',
+          //linkElement:'a:not([class="no-redirect"]):not([target="_blank"]):not([href^="#"])',
           inDuration: 800,
           loading: true,
           loadingClass: 'loader-overlay',
