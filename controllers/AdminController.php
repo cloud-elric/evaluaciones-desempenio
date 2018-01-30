@@ -412,4 +412,10 @@ class AdminController extends Controller
         unlink($nombreArchivo);
     }
 
+    public function actionTest(){
+
+
+        return $this->render("test");
+    }
+
 }
