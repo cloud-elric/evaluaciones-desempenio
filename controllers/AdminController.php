@@ -286,6 +286,8 @@ class AdminController extends Controller
 
     public function actionResultadosPorArea()
     {
+
+        return $this->redirect("site/construccion");
          #Yii::$app->response->format = Response::FORMAT_JSON;
         $areas = CatAreas::find()->where(["b_habilitado" => 1])->all();
         $cuestionarios = EntCuestionario::find()->all();
