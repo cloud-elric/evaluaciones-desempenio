@@ -16,6 +16,11 @@ $this->registerJsFile(
     ['depends' => [\app\assets\AppAsset::className()]]
 );
 
+$this->registerJsFile(
+    '@web/webAssets/js/admin/reportes.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+);
+
 $this->registerCssFile(
     '@web/webAssets/templates/classic/topbar/assets/examples/css/charts/chartjs.css',
     ['depends' => [\app\assets\AppAsset::className()]]
@@ -132,19 +137,30 @@ $this->registerCssFile(
                 var context = canvas.getContext("2d");
                 context.scale(2,2);
                 html2canvas(div, { canvas: canvas }).then(function(canvas) {
-                    document.body.appendChild(canvas);
+                    
+                    var imgWidth = 210;
+                    var pageHeight = 295;
+                    
+                    var widthCanvas = 0;
+                    var heighCanvas = 0;
+                    
+                    var factor = calcularFactor(canvas.width, canvas.height, imgWidth/2);
+
                     var chart = $("#myChart").get(0);
+                    var factor2 = calcularFactor(chart.width, chart.height, imgWidth/2);
+
                     var dataURL = chart.toDataURL();
                     var dataURLPreguntas = canvas.toDataURL();
                     //console.log(dataURL);
     
-                    var pdf = new jsPDF();
+                    var pdf = new jsPDF("p", "mm");
                
                 
                     //
-                    pdf.addImage(dataURLPreguntas, "PNG", 10, 10);
+                    pdf.addImage(dataURLPreguntas, "PNG", 10, 10, canvas.width*factor2, canvas.height*factor2);
                     pdf.addPage();
-                    pdf.addImage(dataURL, "PNG", 10, 10);
+                    pdf.addImage(dataURL, "PNG", 10, 10, chart.width*factor, chart.height*factor);
+                    //pdf.addImage(dataURL, "PNG", 10, 10);
                 
                     pdf.save("web.pdf");
                 });
