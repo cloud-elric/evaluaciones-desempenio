@@ -12,29 +12,35 @@ $this->title="Reporte por individuales";
 $this->params['classBody'] = "site-navbar-small dashboard-admin";
 
 $this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/d3/d3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-    '@web/webAssets/plugins/xepOnline/jqPlugin.js',
+    '@web/webAssets/templates/classic/global/vendor/chart-js/Chart.js',
     ['depends' => [\app\assets\AppAsset::className()]]
-);
+  );
+  
+  $this->registerJsFile(
+    'https://unpkg.com/jspdf@latest/dist/jspdf.min.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    '@web/webAssets/plugins/html2canvas/html2canvas.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    '@web/webAssets/js/admin/reportes.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerCssFile(
+    '@web/webAssets/templates/classic/topbar/assets/examples/css/charts/chartjs.css',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
 
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
-$this->registerCssFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.css',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
 ?>
 <div class="page">
     <!-- Media Content -->

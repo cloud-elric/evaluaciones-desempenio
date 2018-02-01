@@ -94,7 +94,7 @@ $empleado = [
           
 <div class="panel">
     <div class="panel-body">
-        <button class="btn btn-primary float-right" data-style="zoom-in" id="exportar-<?=$model->id_usuario?>">
+        <button class="btn btn-primary float-right ladda-button" data-style="zoom-in" id="exportar-<?=$model->id_usuario?>">
             <span class="ladda-label">
                 <i class="icon oi-file-pdf" aria-hidden="true"></i>
                 Exportar
@@ -117,13 +117,14 @@ $empleado = [
                     $cuestionarioValorAuto = '';
                     $columns = '';
                     $columnsName = '';
-                    $type='';
+                    
+                    $empleados = "";
                     $valorU = [];
                     $vt = '';
                     
                     foreach($empleado["usuariosEvaluaran"] as $key=>$empleadoEvaluar){
-                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evaluacion."',";
-                        $type .= "data0".$empleadoEvaluar->id_usuario .": 'line',";
+                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evalucion_invera."',";
+                       
                         $columns.="['data0".$empleadoEvaluar->id_usuario."', {data".$empleadoEvaluar->id_usuario."}],"; 
                         #$columns.="['data0".$empleadoEvaluar->id_usuario."', {data}],"; 
                     }
@@ -174,191 +175,133 @@ $empleado = [
                              $vt .= $valoresEmpleado.",";
                          }
 
+                        $empleados.= '{
+                            fill:false,
+                            type: "line",
+                            label: "'.$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evalucion_invera.'",
+                            data: ['.$vt.'],
+                            borderWidth: 1,
+                            backgroundColor: colors[index++],
+                            showLine:false,
+                        },';
+
                      }
 
-                     $search = "{data".$empleadoEvaluar->id_usuario."}";
-                     $columns = str_replace($search,$vt,$columns); 
+                    
                  }
 
                 ?>
 
                 </div>
                 <div class="col-md-6">
-                    <div id="chart<?= $index ?>"></div>
+                    <canvas id="chart<?= $index ?>"></canvas>
                     <?php
                     if (Yii::$app->request->isAjax) {
                     ?>
                     <script>
-                        $(document).ready(function(){
-
-                            $('#exportar-<?=$model->id_usuario?>').on('click', function(){
-                                var l = Ladda.create(this);
-            
-                                xepOnline.Formatter.Format('container-export-<?=$model->id_usuario?>',
-                                    {
-                                        filename: 'Reporte <?=$model->nombreCompleto?>',
-                                        render: 'download'
-                                    });
-                                l.stop();
-                                return false;
-                           
-                                       
-                              });
-
-
-
-                            var simple_line_chart<?=$index?> = c3.generate({
-                                bindto: '#chart<?=$index?>',
-                                data: {
-                                    x: 'x',
-                                    columns: [
-                                        ['x', <?=$cuestionarioNombre?>],
-                                        ['puntuacion', <?=$cuestionarioValor?>],
-                                        ['data1', <?=$minimo?> ],
-                                        ['data2', <?=$cuestionarioValorAuto?> ],
-                                        <?=$columns?>
-                                    ],
-                                    names: {
-                                        puntuacion: 'Total otros',
-                                        data1: 'Nivel meta',
-                                        data2: 'Autoevaluación',
-                                        <?=$columnsName?>
-                                        },
-                                    colors: {
-                                        data1: 'rgb(255, 233, 0)',
-                                        
-                                    },
-                                    types: {
-                                        data1: 'line',
-                                        data2: 'line',
-                                        <?=$type?>
-                                    },
+                    $(document).ready(function(){
+                                $("#exportar-<?=$model->id_usuario?>").on("click",  function(){
+                                    var l = Ladda.create(this);
+                                    var nombreArchivo = "Reporte <?=$model->nombreCompleto?>";
+                                    descargarReportePDF("#container-export-<?=$model->id_usuario?>", l, nombreArchivo);
                                     
-                                    type:'bar',
-                            
-                                },
-                                color: {
-                                    pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
-                                },
-                                axis: {
-                                    x: {
-                                        type: 'category',
-                                        tick: {
-                                            //rotate: 75,
-                                            multiline: false
-                                        },
-                                    
-                                    },
-                                    y: {
-                                        max: 5,
-                                        min: 0,
-                                        tick: {
-                                            outer: false,
-                                            count: 5,
-                                            values: [0, 1, 2, 3, 4, 5]
-                                        }
-                                    }
-                                },
-                                grid: {
-                                x: {
-                                    show: false
-                                },
-                                y: {
-                                    show: true
-                                }
-                                }
+                                });
+                    
                             });
-
-                            $(window).trigger("resize");
-                        });
-                        
+                            var index = 0;
+                          var ctx<?=$index?> = $("#chart<?=$index?>");
+                          var myChart = new Chart(ctx<?=$index?>, {
+                              type: "bar",
+                              data: {
+                                  labels: [<?=$cuestionarioNombre?>],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: [<?=$cuestionarioValor?>],
+                                      //backgroundColor: colors[index++],
+                                      borderWidth: 1
+                                  },
+                                  {
+                                      fill:false,
+                                      type: "line",
+                                      label: "Nivel meta",
+                                      data: [<?=$minimo?>],
+                                      borderWidth: 1,
+                                      backgroundColor: "#FBC02D",
+                                      showLine:false,
+                                  },
+                                  {
+                                    fill:false,
+                                    type: "line",
+                                    label: "Autoevaluación",
+                                    data: [<?=$cuestionarioValorAuto?>],
+                                    borderWidth: 1,
+                                    backgroundColor: colors[6],
+                                    showLine:false,
+                                },
+                                <?=$empleados?>
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                    
                     </script>
-
                     <?php
                     }else{
 
                         $this->registerJs(
-                            "
-                            $('#exportar-".$model->id_usuario."').on('click', function(){
-                                var l = Ladda.create(this);
-            
-                                xepOnline.Formatter.Format('container-export-".$model->id_usuario."',
-                                {
-                                    filename: 'Reporte ".$model->nombreCompleto."',
-                                    render: 'download'
+                            '
+                            $(document).ready(function(){
+                                $("#exportar-'.$model->id_usuario.'").on("click",  function(){
+                                    var l = Ladda.create(this);
+                                    var nombreArchivo = "Reporte '.$model->nombreCompleto.'";
+                                    descargarReportePDF("#container-export-'.$model->id_usuario.'", l, nombreArchivo);
+                                    
                                 });
-                                l.stop();
-                                return false;
-                           
-                                       
-                              });
-                            
-                            var simple_line_chart" . $index . " = c3.generate({
-                            bindto: '#chart" . $index . "',
-                            data: {
-                            x: 'x',
-                            columns: [
-                                ['x', " . $cuestionarioNombre . "],
-                                ['puntuacion', " . $cuestionarioValor . "],
-                                ['data1', " . $minimo . " ],
-                                ['data2', " . $cuestionarioValorAuto . " ],
-                                ".$columns."
-                            ],
-                            names: {
-                                puntuacion: 'Total otros',
-                                data1: 'Nivel meta',
-                                data2: 'Autoevaluación',
-                                ".$columnsName."
+                    
+                            });
+                            var index = 0;
+                          var ctx'.$index.' = $("#chart'.$index.'");
+                          var myChart = new Chart(ctx'.$index.', {
+                              type: "bar",
+                              data: {
+                                  labels: ['. $cuestionarioNombre .'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$cuestionarioValor.'],
+                                      //backgroundColor: colors[index++],
+                                      borderWidth: 1
+                                  },
+                                  {
+                                      fill:false,
+                                      type: "line",
+                                      label: "Nivel meta",
+                                      data: ['.$minimo.'],
+                                      borderWidth: 1,
+                                      backgroundColor: "#FBC02D",
+                                      showLine:false,
+                                  },
+                                  {
+                                    fill:false,
+                                    type: "line",
+                                    label: "Autoevaluación",
+                                    data: ['.$cuestionarioValorAuto.'],
+                                    borderWidth: 1,
+                                    backgroundColor: colors[6],
+                                    showLine:false,
                                 },
-                            colors: {
-                                data1: 'rgb(255, 233, 0)',
-                                Puntuación: 'rgb(180, 195, 210)',
-                            },
-                            types: {
-                                data1: 'line',
-                                data2: 'line',
-                                ".$type."
-                            },
-                            
-                            type:'bar',
-                        
-                            },
-                            color: {
-                            pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
-                            },
-                            axis: {
-                            x: {
-                                type: 'category',
-                                tick: {
-                                    //rotate: 75,
-                                    multiline: false
-                                },
-                                
-                            },
-                            y: {
-                                max: 5,
-                                min: 0,
-                                tick: {
-                                outer: false,
-                                count: 5,
-                                values: [0, 1, 2, 3, 4, 5]
-                                }
-                            }
-                            },
-                            grid: {
-                            x: {
-                                show: false
-                            },
-                            y: {
-                                show: true
-                            }
-                            }
-                        });
-                        $('svg').attr('xmlns','http://www.w3.org/2000/svg');
-                        ",
-                            View::POS_END,
+                                '.$empleados.'
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                            ',
+                            View::POS_READY,
                             $index
                         );
+
+                        
                     }    
                     ?>
                 </div>

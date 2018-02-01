@@ -40,8 +40,8 @@ $this->registerCssFile(
                     </button>
                 </div>
             </div>
-            <div class="row">
-            <div class="col-md-6  preguntas">
+            <div class="row preguntas">
+            <div class="col-md-6  ">
             <div class="row">
                 <div class="col-md-12">
                     <p>
@@ -125,92 +125,36 @@ $this->registerCssFile(
         '
         $(document).ready(function(){
             $("#exportButton").on("click",  function(){
-
-                var w = 1000;
-                var h = 1000;
-                var div = document.querySelector(".preguntas");
-                var canvas = document.createElement("canvas");
-                canvas.width = w*2;
-                canvas.height = h*2;
-                canvas.style.width = w + "px";
-                canvas.style.height = h + "px";
-                var context = canvas.getContext("2d");
-                context.scale(2,2);
-                html2canvas(div, { canvas: canvas }).then(function(canvas) {
-                    
-                    var imgWidth = 210;
-                    var pageHeight = 295;
-                    
-                    var widthCanvas = 0;
-                    var heighCanvas = 0;
-                    
-                    var factor = calcularFactor(canvas.width, canvas.height, imgWidth/2);
-
-                    var chart = $("#myChart").get(0);
-                    var factor2 = calcularFactor(chart.width, chart.height, imgWidth/2);
-
-                    var dataURL = chart.toDataURL();
-                    var dataURLPreguntas = canvas.toDataURL();
-                    //console.log(dataURL);
-    
-                    var pdf = new jsPDF("p", "mm");
-               
-                
-                    //
-                    pdf.addImage(dataURLPreguntas, "PNG", 10, 10, canvas.width*factor2, canvas.height*factor2);
-                    pdf.addPage();
-                    pdf.addImage(dataURL, "PNG", 10, 10, chart.width*factor, chart.height*factor);
-                    //pdf.addImage(dataURL, "PNG", 10, 10);
-                
-                    pdf.save("web.pdf");
-                });
-
-                return false;
-
-                
-               
-                 
+                descargarReportePDF(".preguntas","#myChart", "test");
                 
             });
 
         });
-        
-
+        var index = 0;
         var ctx = $("#myChart");
         var myChart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+                labels: ["Pregunta1", "Pregunta2", "Pregunta3", "Pregunta4", "Pregunta5", "Pregunta6", "Pregunta7", "Pregunta8"],
                 datasets: [{
                     type: "bar",
                     label: "# of Votes",
-                    data: [12, 19, 3, 5, 2, 3],
-                   
+                    data: [12, 4, 3, 5, 2, 3, 4, 5],
+                    backgroundColor: colors[index++],
                     borderWidth: 1
                 },
                 {
                     fill:false,
                     type: "line",
                      label: "# of Votess",
-                    data: [12, 19, 3, 5, 2, 3],
-                   showLine:false,
-                    borderWidth: 1
+                    data: [12, 3, 3, 5, 2, 3, 9, 8],
+                    showLine:false,
+                     borderWidth: 1,
+                     backgroundColor: colors[index++],
                 }
                 ]
             },
-            options: {
-                tooltips:{
-                    intersect: true,
-                    mode: "index"
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
-            }
+            options: optionsGrafica
         });
         ',
         View::POS_READY,
