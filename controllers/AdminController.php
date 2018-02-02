@@ -14,6 +14,7 @@ use app\models\EntCuestionario;
 use app\models\EntRespuestas;
 use yii\data\ActiveDataProvider;
 use app\components\FPDF\PDF;
+use yii\db\Query;
 
 
 class AdminController extends Controller
@@ -287,7 +288,7 @@ class AdminController extends Controller
     public function actionResultadosPorArea()
     {
 
-        return $this->redirect(["site/construccion"]);
+        #return $this->redirect(["site/construccion"]);
          #Yii::$app->response->format = Response::FORMAT_JSON;
         $areas = CatAreas::find()->where(["b_habilitado" => 1])->all();
         $cuestionarios = EntCuestionario::find()->all();
@@ -299,50 +300,45 @@ class AdminController extends Controller
             $cuestionariosArea = [];
 
             foreach ($cuestionarios as $cuestionario) {
-                $respuestas = EntRespuestas::find()
-                    ->where(['id_area' => $area->id_area, 'id_cuestionario' => $cuestionario->id_cuestionario])
-                    ->all();
+                $respuestascount = EntRespuestas::find()
+                ->where(['id_area' => $area->id_area, 'id_cuestionario' => $cuestionario->id_cuestionario])
+                ->all();
+
+                $numPreguntas = count($cuestionario->entPreguntas);
+
+                $connection = \Yii::$app->db;
+                $model = $connection->createCommand("SELECT P.txt_pregunta, 
+                (SUM(RE.txt_valor)/count(*)) as num_promedio 
+                FROM rel_usuario_respuesta RE
+                INNER JOIN ent_preguntas P ON P.id_pregunta = RE.id_pregunta
+                WHERE RE.id_respuesta IN 
+                (SELECT id_respuesta FROM ent_respuestas WHERE id_area = 1 AND id_cuestionario=1)
+                GROUP BY RE.id_pregunta");
+                $respuestas = $model->queryAll();
 
                 $promedioTotal = 0;
-                $numPreguntas = 0;
-
                 $preguntaTexto = [];
-                foreach ($respuestas as $respuesta) {
-                    $preguntas = $respuesta->idCuestionario->entPreguntas;
-                    $numPreguntas = count($preguntas);
-                    
-                    $respuestasValores = $respuesta->relUsuarioRespuestas;
 
-                    $promedio = 0;
-                    $total = 0;
-                    $numRespuesta = 0;
-                    foreach ($preguntas as $pregunta) {
-                        foreach ($respuestasValores as $respuestaValor) {
-                            if ($respuestaValor->id_pregunta == $pregunta->id_pregunta) {
-                                $numRespuesta++;
-                                $total += $respuestaValor->txt_valor;
-                            }
-                        }
-                        $promedio = $total / $numRespuesta;
-                        $promedioTotal += $promedio;
-                        $preguntaTexto[] = [
-                            'textoPregunta' => $pregunta->txt_pregunta,
-                            'promedio' => round($promedio, 1),
-                        ];
-                    }
-
-                    if ($numPreguntas > 0) {
-                        $promedioTotal = $promedioTotal / $numPreguntas;
-                    }
-                    
+                foreach($respuestas as $respuesta){
+                    $preguntaTexto[] = [
+                        'textoPregunta' => $respuesta["txt_pregunta"],
+                        'promedio' => round($respuesta["num_promedio"], 1),
+                    ];
+                   
+                    $promedioTotal += round($respuesta["num_promedio"], 1);
                 }
+                
+                if($numPreguntas>0){
+                    $promedioTotal = $promedioTotal / $numPreguntas;
+                }
+                
 
                 $cuestionariosArea[] = [
                     'cuestionarioNombre' => $cuestionario->txt_nombre,
                     'preguntas' => $preguntaTexto,
                     'promedioTotal' => $promedioTotal,
-                    'identificador' => $area->id_area . $cuestionario->id_cuestionario . $respuesta->id_respuesta,
-                    'numeroEncuestados'=>count($respuestas)
+                    'identificador' => $area->id_area . $cuestionario->id_cuestionario,
+                    'numeroEncuestados'=>count($respuestascount)
                 ];
 
             }

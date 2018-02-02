@@ -218,7 +218,7 @@ $empleado = [
                                       type: "bar",
                                       label: "Total otros",
                                       data: [<?=$cuestionarioValor?>],
-                                      //backgroundColor: colors[index++],
+                                      backgroundColor: colorInicial,
                                       borderWidth: 1
                                   },
                                   {
@@ -270,7 +270,7 @@ $empleado = [
                                       type: "bar",
                                       label: "Total otros",
                                       data: ['.$cuestionarioValor.'],
-                                      //backgroundColor: colors[index++],
+                                      backgroundColor:colorInicial,
                                       borderWidth: 1
                                   },
                                   {

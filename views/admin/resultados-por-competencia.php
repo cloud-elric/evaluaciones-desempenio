@@ -138,7 +138,7 @@ $this->registerJsFile(
                                                                 type: "bar",
                                                                 label: "Total otros",
                                                                 data: ['.$preguntaV.'],
-                                                                backgroundColor: colors[index++],
+                                                                backgroundColor: colorInicial,
                                                                 borderWidth: 1
                                                             },
                                                             

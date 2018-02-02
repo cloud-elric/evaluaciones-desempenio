@@ -19,7 +19,7 @@ var optionsGrafica =  {
         }]
     }
 };
-
+var colorInicial = "#62a8ea";
 var colors = ["#3583CA", "#70A532", "#424242", "#E53B75", "#37A9B7",
              "#FBC02D", "#263238", "#6D45BC", "#178D81", "#E98F2E", 
              "#465BD4", "#279566", "#715146","#FA7A7A","#89BCEB","#ACD57C",
