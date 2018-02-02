@@ -167,7 +167,7 @@ $this->registerCssFile(
                                       type: "bar",
                                       label: "Total otros",
                                       data: ['.$preguntaV.'],
-                                      backgroundColor: colorInicial,
+                                      //backgroundColor: colorInicial,
                                       borderWidth: 1
                                   },
                                   
