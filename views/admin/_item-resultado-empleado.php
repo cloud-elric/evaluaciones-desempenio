@@ -123,7 +123,8 @@ $empleado = [
                     $vt = '';
                     
                     foreach($empleado["usuariosEvaluaran"] as $key=>$empleadoEvaluar){
-                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evalucion_invera."',";
+                        $columnsName .= "data0".$empleadoEvaluar->id_usuario.": '".$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evaluacion
+                        ."',";
                        
                         $columns.="['data0".$empleadoEvaluar->id_usuario."', {data".$empleadoEvaluar->id_usuario."}],"; 
                         #$columns.="['data0".$empleadoEvaluar->id_usuario."', {data}],"; 
@@ -178,7 +179,7 @@ $empleado = [
                         $empleados.= '{
                             fill:false,
                             type: "line",
-                            label: "'.$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evalucion_invera.'",
+                            label: "'.$empleadoEvaluar->idUsuario->nombreCompleto." - ".$empleadoEvaluar->txt_tipo_evaluacion.'",
                             data: ['.$vt.'],
                             borderWidth: 1,
                             backgroundColor: colors[index++],
