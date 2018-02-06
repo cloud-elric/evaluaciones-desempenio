@@ -237,7 +237,7 @@ $empleado = [
                                     label: "Autoevaluación",
                                     data: [<?=$cuestionarioValorAuto?>],
                                     borderWidth: 1,
-                                    backgroundColor: colors[6],
+                                    backgroundColor: "#D6494B",
                                     showLine:false,
                                 },
                                 <?=$empleados?>
@@ -289,7 +289,7 @@ $empleado = [
                                     label: "Autoevaluación",
                                     data: ['.$cuestionarioValorAuto.'],
                                     borderWidth: 1,
-                                    backgroundColor: colors[6],
+                                    backgroundColor: "#D6494B",
                                     showLine:false,
                                 },
                                 '.$empleados.'
