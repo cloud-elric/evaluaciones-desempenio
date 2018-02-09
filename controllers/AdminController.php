@@ -49,6 +49,7 @@ class AdminController extends Controller
     {    
         #Yii::$app->response->format = Response::FORMAT_JSON;
         $niveles = CatNiveles::find()->where(["b_habilitado" => 1])->all();
+
         $resultados = [];
         foreach ($niveles as $nivel) {
 
@@ -63,29 +64,29 @@ class AdminController extends Controller
                 $puntuacionPromedio = $cuestionarioNivel->num_puntuacion;
 
                 $respuestasUsuarios = [];
-                foreach ($respuestas as $respuesta) {
-                    $respuestasUsuarios = $respuesta->relUsuarioRespuestas;
-
-                }
 
                 $textoPreguntas = [];
                 $promedioCuestionario = 0;
                 foreach ($preguntas as $pregunta) {
-                    $respuestasValores = [];
+
+                    
                     $promedio = 0;
                     $total = 0;
                     $numPreguntas = 0;
-                    foreach ($respuestasUsuarios as $respuestaUsuario) {
-                        if ($respuestaUsuario->id_pregunta == $pregunta->id_pregunta) {
-                            $numPreguntas++;
-                            $total += $respuestaUsuario->txt_valor;
-                        }
 
+                    $connection = \Yii::$app->db;
+                    $model = $connection->createCommand("SELECT sum(txt_valor)/count(*) AS promedio, count(*) as total FROM rel_usuario_respuesta where id_respuesta IN (SELECT id_respuesta FROM ent_respuestas WHERE id_cuestionario =".$cuestionarioNivel->id_cuestionario." AND id_nivel = ".$nivel->id_nivel.") AND id_pregunta = ".$pregunta->id_pregunta);
+                    $respuestasValores = $model->queryAll();
+
+                    foreach($respuestasValores as $respuesta){
+                        $promedio = round($respuesta['promedio'], 1);
+                        $total = $respuesta['total'];
                     }
 
-                    if ($numPreguntas > 0) {
-                        $promedio = $total / $numPreguntas;
-                    }
+                    
+               
+
+                   
                     $promedioCuestionario += $promedio;
 
                     $textoPreguntas[] = [
