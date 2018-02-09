@@ -257,6 +257,7 @@ class AdminController extends Controller
         } else {
         }
     }
+    
 
     public function actionResultadosPorEmpleados($us = null)
     {
