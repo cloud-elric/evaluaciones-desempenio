@@ -39,6 +39,7 @@ function calcularFactor($ancho, $alto, $redimension) {
 }
 
 function descargarReportePDF(preguntasIdentificador, l, nombre){
+
     var w = 1000;
     var h = 1000;
     var div = document.querySelector(preguntasIdentificador);

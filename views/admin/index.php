@@ -115,7 +115,7 @@ $this->registerCssFile(
                     </small>
                   </h6>
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                       <?php
                       $preguntaT = '';
                       $index = 0;
@@ -148,7 +148,7 @@ $this->registerCssFile(
                       ?>
                     </div>
                   
-                    <div class="col-md-6">
+                    <div class="col-md-9">
                       <canvas id="chart<?=$cuestionario["identificador"]?>">
 
                       </canvas>
@@ -162,7 +162,7 @@ $this->registerCssFile(
                                 var l = Ladda.create(this);
 
                                 var nombreArchivo = "Reporte nivel '.$resultado['nombre_nivel'].' - '.$cuestionario["nombre_cuestionario"].'";
-                                  descargarReportePDF("#container-export-'.$cuestionario["identificador"].'", l, nombreArchivo);
+                                  descargarReportePDF("#container-export-2-'.$cuestionario["identificador"].'", l, nombreArchivo);
                                   
                               });
 
@@ -225,4 +225,124 @@ $this->registerCssFile(
 </div>
   </div>
 </div>
+</div>
+
+
+<div style="display:block; position:absolute; top:-100000000px">
+<?php
+        $active = true;
+        foreach($resultados as $idArea=>$resultado){
+        ?>
+        
+        <div class="row">
+            <?php
+            foreach($resultado["cuestionarios"] as $cuestionario){
+            ?>  
+
+            <div class="panel">
+              <div class="panel-body">
+              
+                <section id="container-export-2-<?=$cuestionario["identificador"]?>">
+                  <h6 class="panel-title">
+                    <small>
+                    Número de encuestados totales: <?=$cuestionario["numEncuestados"]?>
+                    </small><br>
+                    Nivel <?=$resultado['nombre_nivel']?> - <?=$cuestionario["nombre_cuestionario"]?><br>
+                    <small>
+                    <?=$cuestionario["promedioCuestionario"]?>
+                    </small>
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <?php
+                      $preguntaT = '';
+                      $index = 0;
+                      $preguntaV = '';
+                      $minimo = '';
+                      foreach($cuestionario['preguntas'] as $keys=>$pregunta){
+
+                        if ($pregunta === end($cuestionario['preguntas'])) {
+                          $preguntaT .= '"Pregunta '.++$index.'"';
+                          $preguntaV .= $pregunta['promedio']."";
+                          $minimo .= $cuestionario["puntuacionPromedio"]."";
+                        }else{
+                          $preguntaT .= '"Pregunta '.++$index.'",';
+                          $preguntaV .= $pregunta['promedio'].",";
+                          $minimo .= $cuestionario["puntuacionPromedio"].",";
+                        }
+                        
+                      ?>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <p>
+                          <span class="badge badge-outline badge-success">Pregunta <?=$index?></span>
+                          <br>  
+                          <?=$pregunta["texto_pregunta"]?>
+                          </p>
+                        </div>
+                      </div>
+                      <?php
+                      }
+                      ?>
+                    </div>
+                  
+                    <div class="col-md-9">
+                      <canvas id="chart-2-<?=$cuestionario["identificador"]?>">
+
+                      </canvas>
+
+                      <?php
+                      
+                      $this->registerJs(
+                          '
+                          
+                          var index = 0;
+                          var ctx'.$cuestionario["identificador"].' = $("#chart-2-'.$cuestionario["identificador"].'");
+                          var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                              type: "bar",
+                              data: {
+                                  labels: ['.$preguntaT.'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$preguntaV.'],
+                                      //backgroundColor: colors[index++],
+                                      borderWidth: 1
+                                  },
+                                  {
+                                      fill:false,
+                                      type: "line",
+                                      label: "Nivel meta",
+                                      data: ['.$minimo.'],
+                                      showLine:true,
+                                      borderWidth: 1,
+                                      backgroundColor: "#FBC02D",
+                                  }
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                          ',
+                          View::POS_READY,
+                          $cuestionario["identificador"]."v2"
+                      );
+                      ?>
+                      </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+            <?php
+            }
+            ?>
+          </div>
+        
+         
+        <?php
+        $active = false;
+
+        
+
+        }
+        ?>
 </div>
