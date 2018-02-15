@@ -254,11 +254,13 @@ $this->registerCssFile(
                       <div class="row">
                         
                         <div class="col-md-12">
+                          <br>
                           <p>
                           <span class="badge badge-outline badge-success">Pregunta <?=$index?></span>
                           <br>  
                           <?=$pregunta["textoPregunta"]?>
                           </p>
+                          <br>
                         </div>
                       </div>
                       
