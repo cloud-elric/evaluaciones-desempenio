@@ -222,7 +222,7 @@ $this->registerCssFile(
               <div class="panel-body">
                 
                 <section id="container-export-2-<?=$cuestionario["identificador"]?>">
-                  <h6 class="panel-title">
+                  <h6 class="panel-title" style="margin-top:30px;">
                     <small>
                         Número de encuestados totales:<?=$cuestionario["numeroEncuestados"]?>
                     </small><br>
@@ -232,7 +232,7 @@ $this->registerCssFile(
                     </small>
                   </h6>
                   <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="margin-top:30px;">
                       <?php
                       $preguntaT = '';
                       $index = 0;
@@ -252,6 +252,7 @@ $this->registerCssFile(
                         
                       ?>
                       <div class="row">
+                        
                         <div class="col-md-12">
                           <p>
                           <span class="badge badge-outline badge-success">Pregunta <?=$index?></span>
