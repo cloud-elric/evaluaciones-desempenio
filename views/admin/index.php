@@ -243,7 +243,8 @@ $this->registerCssFile(
               <div class="panel-body">
               
                 <section id="container-export-2-<?=$cuestionario["identificador"]?>">
-                  <h6 class="panel-title">
+                <br><br><br>
+                  <h6 class="panel-title" style="margin-top:30px;">
                     <small>
                     Número de encuestados totales: <?=$cuestionario["numEncuestados"]?>
                     </small><br>
