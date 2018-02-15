@@ -220,7 +220,7 @@ $this->registerCssFile(
             ?>  
             <div class="panel">
               <div class="panel-body">
-                
+              <br><br><br>
                 <section id="container-export-2-<?=$cuestionario["identificador"]?>">
                   <h6 class="panel-title" style="margin-top:30px;">
                     <small>
