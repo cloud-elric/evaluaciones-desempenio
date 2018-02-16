@@ -11,29 +11,33 @@ $this->registerJsFile(
     ['depends' => [\app\assets\AppAssetClassicTopBar::className()]]
 );
 
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/d3/d3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/plugins/xepOnline/jqPlugin.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
+$this->registerJsFile(
+  '@web/webAssets/templates/classic/global/vendor/chart-js/Chart.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  'https://unpkg.com/jspdf@latest/dist/jspdf.min.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  '@web/webAssets/plugins/html2canvas/html2canvas.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  '@web/webAssets/js/admin/reportes.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
 $this->registerCssFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.css',
+  '@web/webAssets/templates/classic/topbar/assets/examples/css/charts/chartjs.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 ?>
@@ -45,13 +49,14 @@ $this->registerCssFile(
     <h1 class="page-title"><?=$this->title?></h1>
     <div class="page-header-actions">
       
-        <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
+        <!-- <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
             <span class="ladda-label">
                 Enviar evaluaciones
                 <i class="icon fa-send" aria-hidden="true"></i>
             </span>
             
-        </button>
+        </button> -->
+        
     </div>
   </div>
   <!-- Media Content -->
@@ -111,7 +116,7 @@ $this->registerCssFile(
                     </small>
                   </h6>
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                       <?php
                       $preguntaT = '';
                       $index = 0;
@@ -144,85 +149,54 @@ $this->registerCssFile(
                       ?>
                     </div>
                   
-                    <div class="col-md-6">
-                      <div id="chart<?=$cuestionario["identificador"]?>">
+                    <div class="col-md-9">
+                      <canvas id="chart<?=$cuestionario["identificador"]?>">
 
-                      </div>
+                      </canvas>
 
                       <?php
+                      
                       $this->registerJs(
-                        "
-                        $('#exportar-".$cuestionario["identificador"]."').on('click', function(){
-                          var l = Ladda.create(this);
-      
-                          xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."', 
-                            {
-                              filename: 'Reporte nivel ".$resultado['nombre_nivel']." - ".$cuestionario["nombre_cuestionario"]."',
-                              render: 'download'
-                            });
-                          l.stop();
-                          return false;
-                     
-                                 
-                        });
-                        
-                        var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
-                          bindto: '#chart".$cuestionario["identificador"]."',
-                          data: {
-                            x: 'x',
-                            columns: [
-                              ['x', ".$preguntaT."],
-                              ['puntuacion', ".$preguntaV."],
-                              ['data1', ".$minimo." ]
-                            ],
-                            names: {
-                              puntuacion: 'Total otros',
-                              data1: 'Nivel meta',
-                            },
-                            colors: {
-                              data1: 'rgb(255, 233, 0)',
-                            },
-                            type:'bar',
-                            types: {
-                              data1: 'line',
-                          },
-                          },
-                          color: {
-                            pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
-                          },
-                          axis: {
-                            x: {
-                                type: 'category',
-                                tick: {
-                                    //rotate: 75,
-                                    multiline: false
-                                },
-                              
-                            },
-                            y: {
-                              max: 5,
-                              min: 0,
-                              tick: {
-                                outer: false,
-                                count: 5,
-                                values: [0, 1, 2, 3, 4, 5]
-                              }
-                            }
-                          },
-                          grid: {
-                            x: {
-                              show: false
-                            },
-                            y: {
-                              show: true
-                            }
-                          }
-                        });
-                        
-                        $('svg').attr('xmlns','http://www.w3.org/2000/svg');
-                        ",
-                        View::POS_READY,
-                        $cuestionario["identificador"]
+                          '
+                          $(document).ready(function(){
+                              $("#exportar-'.$cuestionario["identificador"].'").on("click",  function(){
+                                var l = Ladda.create(this);
+
+                                var nombreArchivo = "Reporte nivel '.$resultado['nombre_nivel'].' - '.$cuestionario["nombre_cuestionario"].'";
+                                  descargarReportePDF("#container-export-2-'.$cuestionario["identificador"].'", l, nombreArchivo);
+                                  
+                              });
+
+                          });
+                          var index = 0;
+                          var ctx'.$cuestionario["identificador"].' = $("#chart'.$cuestionario["identificador"].'");
+                          var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                              type: "bar",
+                              data: {
+                                  labels: ['.$preguntaT.'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$preguntaV.'],
+                                      //backgroundColor: colors[index++],
+                                      borderWidth: 1
+                                  },
+                                  {
+                                      fill:false,
+                                      type: "line",
+                                      label: "Nivel meta",
+                                      data: ['.$minimo.'],
+                                      showLine:true,
+                                      borderWidth: 1,
+                                      backgroundColor: "#FBC02D",
+                                  }
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                          ',
+                          View::POS_READY,
+                          $cuestionario["identificador"]
                       );
                       ?>
                       </div>
@@ -252,4 +226,125 @@ $this->registerCssFile(
 </div>
   </div>
 </div>
+</div>
+
+
+<div style="display:block; position:absolute; top:-100000000px">
+<?php
+        $active = true;
+        foreach($resultados as $idArea=>$resultado){
+        ?>
+        
+        <div class="row">
+            <?php
+            foreach($resultado["cuestionarios"] as $cuestionario){
+            ?>  
+
+            <div class="panel">
+              <div class="panel-body">
+              
+                <section id="container-export-2-<?=$cuestionario["identificador"]?>">
+                <br><br><br>
+                  <h6 class="panel-title" style="margin-top:30px;">
+                    <small>
+                    Número de encuestados totales: <?=$cuestionario["numEncuestados"]?>
+                    </small><br>
+                    Nivel <?=$resultado['nombre_nivel']?> - <?=$cuestionario["nombre_cuestionario"]?><br>
+                    <small>
+                    <?=$cuestionario["promedioCuestionario"]?>
+                    </small>
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <?php
+                      $preguntaT = '';
+                      $index = 0;
+                      $preguntaV = '';
+                      $minimo = '';
+                      foreach($cuestionario['preguntas'] as $keys=>$pregunta){
+
+                        if ($pregunta === end($cuestionario['preguntas'])) {
+                          $preguntaT .= '"Pregunta '.++$index.'"';
+                          $preguntaV .= $pregunta['promedio']."";
+                          $minimo .= $cuestionario["puntuacionPromedio"]."";
+                        }else{
+                          $preguntaT .= '"Pregunta '.++$index.'",';
+                          $preguntaV .= $pregunta['promedio'].",";
+                          $minimo .= $cuestionario["puntuacionPromedio"].",";
+                        }
+                        
+                      ?>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <p>
+                          <span class="badge badge-outline badge-success">Pregunta <?=$index?></span>
+                          <br>  
+                          <?=$pregunta["texto_pregunta"]?>
+                          </p>
+                        </div>
+                      </div>
+                      <?php
+                      }
+                      ?>
+                    </div>
+                  
+                    <div class="col-md-9">
+                      <canvas id="chart-2-<?=$cuestionario["identificador"]?>">
+
+                      </canvas>
+
+                      <?php
+                      
+                      $this->registerJs(
+                          '
+                          
+                          var index = 0;
+                          var ctx'.$cuestionario["identificador"].' = $("#chart-2-'.$cuestionario["identificador"].'");
+                          var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                              type: "bar",
+                              data: {
+                                  labels: ['.$preguntaT.'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$preguntaV.'],
+                                      //backgroundColor: colors[index++],
+                                      borderWidth: 1
+                                  },
+                                  {
+                                      fill:false,
+                                      type: "line",
+                                      label: "Nivel meta",
+                                      data: ['.$minimo.'],
+                                      showLine:true,
+                                      borderWidth: 1,
+                                      backgroundColor: "#FBC02D",
+                                  }
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                          ',
+                          View::POS_READY,
+                          $cuestionario["identificador"]."v2"
+                      );
+                      ?>
+                      </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+            <?php
+            }
+            ?>
+          </div>
+        
+         
+        <?php
+        $active = false;
+
+        
+
+        }
+        ?>
 </div>

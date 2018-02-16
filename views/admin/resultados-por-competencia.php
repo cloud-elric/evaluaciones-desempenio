@@ -6,30 +6,36 @@ $this->title="Reporte por competencias";
 
 $this->params['classBody'] = "site-navbar-small dashboard-admin";
 
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/d3/d3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-    '@web/webAssets/plugins/xepOnline/jqPlugin.js',
-    ['depends' => [\app\assets\AppAsset::className()]]
-  );
-
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
-$this->registerCssFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.css',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
+
+$this->registerJsFile(
+    '@web/webAssets/templates/classic/global/vendor/chart-js/Chart.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    'https://unpkg.com/jspdf@latest/dist/jspdf.min.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    '@web/webAssets/plugins/html2canvas/html2canvas.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerJsFile(
+    '@web/webAssets/js/admin/reportes.js',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
+  
+  $this->registerCssFile(
+    '@web/webAssets/templates/classic/topbar/assets/examples/css/charts/chartjs.css',
+    ['depends' => [\app\assets\AppAsset::className()]]
+  );
 ?>
 <div class="page">
     <!-- Media Content -->
@@ -105,82 +111,47 @@ $this->registerCssFile(
                                             </div>
                                             
                                             <div class="col-md-6">
-                                                <div id="chart<?=$cuestionario["identificador"]?>">
+                                                <canvas id="chart<?=$cuestionario["identificador"]?>">
 
-                                                </div>
+                                                </canvas>
 
-                                                <?php
+                                                <?php 
                                                 $this->registerJs(
-                                                "
-                                                $('#exportar-".$cuestionario["identificador"]."').on('click', function(){
-                                                    var l = Ladda.create(this);
-                                
-                                                    xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."', 
-                                                    {
-                                                        filename: 'Reporte competencia ".$cuestionario['nombre_cuestionario']."',
-                                                        render: 'download'
+                                                    '
+                                                    $(document).ready(function(){
+                                                        $("#exportar-'.$cuestionario["identificador"].'").on("click",  function(){
+                                                          var l = Ladda.create(this);
+                          
+                                                          var nombreArchivo = "Reporte nivel '.$cuestionario['nombre_cuestionario'].'";
+                                                            descargarReportePDF("#container-export-'.$cuestionario["identificador"].'", l, nombreArchivo);
+                                                            
+                                                        });
+                          
                                                     });
-                                                    l.stop();
-                                                    return false;
-                                            
-                                                        
-                                                });
-                                                
-                                                var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
-                                                    bindto: '#chart".$cuestionario["identificador"]."',
-                                                    data: {
-                                                    x: 'x',
-                                                    columns: [
-                                                        ['x', ".$preguntaT."],
-                                                        ['puntuacion', ".$preguntaV."],
-                                                    
-                                                    ],
-                                                    names: {
-                                                        puntuacion: 'Total otros',
-                                                        
-                                                    },
-                                                
-                                                    
-                                                    type:'bar',
-                                                
-                                                    },
-                                                    color: {
-                                                    pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
-                                                    },
-                                                    axis: {
-                                                    x: {
-                                                        type: 'category',
-                                                        tick: {
-                                                            //rotate: 75,
-                                                            multiline: false
+                                                    var index = 0;
+                                                    var ctx'.$cuestionario["identificador"].' = $("#chart'.$cuestionario["identificador"].'");
+                                                    var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                                                        type: "bar",
+                                                        data: {
+                                                            labels: ['.$preguntaT.'],
+                                                            datasets: [{
+                                                                type: "bar",
+                                                                label: "Total otros",
+                                                                data: ['.$preguntaV.'],
+                                                                //backgroundColor: colorInicial,
+                                                                borderWidth: 1
+                                                            },
+                                                            
+                                                            ]
                                                         },
-                                                        
-                                                    },
-                                                    y: {
-                                                        max: 5,
-                                                        min: 0,
-                                                        tick: {
-                                                        outer: false,
-                                                        count: 5,
-                                                        values: [0, 1, 2, 3, 4, 5]
-                                                        }
-                                                    }
-                                                    },
-                                                    grid: {
-                                                    x: {
-                                                        show: false
-                                                    },
-                                                    y: {
-                                                        show: true
-                                                    }
-                                                    }
-                                                });
-                                                
-                                                $('svg').attr('xmlns','http://www.w3.org/2000/svg');",
-                                                View::POS_READY,
-                                                $cuestionario["identificador"]
+                                                        options: optionsGrafica
+                                                    });
+                                                    ',
+                                                    View::POS_READY,
+                                                    $cuestionario["identificador"]
                                                 );
                                                 ?>
+                                               
                                                 </div>
                                             </div>
                                         </section>

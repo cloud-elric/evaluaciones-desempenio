@@ -12,29 +12,33 @@ $this->registerJsFile(
     ['depends' => [\app\assets\AppAssetClassicTopBar::className()]]
 );
 
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/d3/d3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.min.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
-$this->registerJsFile(
-  '@web/webAssets/plugins/xepOnline/jqPlugin.js',
-  ['depends' => [\app\assets\AppAsset::className()]]
-);
-
 $this->registerCssFile(
   '@web/webAssets/css/admin/index.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 
+$this->registerJsFile(
+  '@web/webAssets/templates/classic/global/vendor/chart-js/Chart.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  'https://unpkg.com/jspdf@latest/dist/jspdf.min.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  '@web/webAssets/plugins/html2canvas/html2canvas.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
+$this->registerJsFile(
+  '@web/webAssets/js/admin/reportes.js',
+  ['depends' => [\app\assets\AppAsset::className()]]
+);
+
 $this->registerCssFile(
-  '@web/webAssets/templates/classic/global/vendor/c3/c3.css',
+  '@web/webAssets/templates/classic/topbar/assets/examples/css/charts/chartjs.css',
   ['depends' => [\app\assets\AppAsset::className()]]
 );
 ?>
@@ -90,6 +94,7 @@ $this->registerCssFile(
                     Exportar
                   </span>
                 </button>
+                <!-- <section id="container-export-<?=$cuestionario["identificador"]?>"> -->
                 <section id="container-export-<?=$cuestionario["identificador"]?>">
                   <h6 class="panel-title">
                     <small>
@@ -101,7 +106,7 @@ $this->registerCssFile(
                     </small>
                   </h6>
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                       <?php
                       $preguntaT = '';
                       $index = 0;
@@ -135,82 +140,48 @@ $this->registerCssFile(
                       ?>
                     </div>
                   
-                    <div class="col-md-6">
-                      <div id="chart<?=$cuestionario["identificador"]?>">
+                    <div class="col-md-9">
+                      <canvas id="chart<?=$cuestionario["identificador"]?>">
 
-                      </div>
+                      </canvas>
 
-                      <?php
+                      <?php 
                       $this->registerJs(
-                        "
-                        $('#exportar-".$cuestionario["identificador"]."').on('click', function(){
-                          var l = Ladda.create(this);
-      
-                          xepOnline.Formatter.Format('container-export-".$cuestionario["identificador"]."', 
-                            {
-                              filename: 'Reporte área ".$resultado['nombreArea']." - ".$cuestionario["cuestionarioNombre"]."',
-                              render: 'download'
-                            });
-                          l.stop();
-                          return false;
-                     
-                                 
-                        });
-                        var simple_line_chart".$cuestionario["identificador"]." = c3.generate({
-                          bindto: '#chart".$cuestionario["identificador"]."',
-                          data: {
-                            x: 'x',
-                            columns: [
-                              ['x', ".$preguntaT."],
-                              ['puntuacion', ".$preguntaV."],
-                            
-                            ],
-                            names: {
-                              puntuacion: 'Total otros',
-                              
-                            },
-                            
-                            
-                            type:'bar',
-                            
-                          },
-                          color: {
-                            pattern: [Config.colors('primary', 600), Config.colors('green', 600)]
-                          },
-                          axis: {
-                            x: {
-                                type: 'category',
-                                tick: {
-                                    //rotate: 75,
-                                    multiline: false
-                                },
-                              
-                            },
-                            y: {
-                              max: 5,
-                              min: 0,
-                              tick: {
-                                outer: false,
-                                count: 5,
-                                values: [0, 1, 2, 3, 4, 5]
-                              }
-                            }
-                          },
-                          grid: {
-                            x: {
-                              show: false
-                            },
-                            y: {
-                              show: true
-                            }
-                          }
-                        });
-                        $('svg').attr('xmlns','http://www.w3.org/2000/svg');
-                        ",
-                        View::POS_READY,
-                        $cuestionario["identificador"]
+                          '
+                          $(document).ready(function(){
+                              $("#exportar-'.$cuestionario["identificador"].'").on("click",  function(){
+                                var l = Ladda.create(this);
+
+                                var nombreArchivo = "Reporte área '.$resultado['nombreArea']." - ".$cuestionario["cuestionarioNombre"].'";
+                                  descargarReportePDF("#container-export-2-'.$cuestionario["identificador"].'", l, nombreArchivo);
+                                  
+                              });
+
+                          });
+                          var index = 0;
+                          var ctx'.$cuestionario["identificador"].' = $("#chart'.$cuestionario["identificador"].'");
+                          var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                              type: "bar",
+                              data: {
+                                  labels: ['.$preguntaT.'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$preguntaV.'],
+                                      //backgroundColor: colorInicial,
+                                      borderWidth: 1
+                                  },
+                                  
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                          ',
+                          View::POS_READY,
+                          $cuestionario["identificador"]
                       );
                       ?>
+
                       </div>
                   </div>
                 </section>
@@ -221,9 +192,7 @@ $this->registerCssFile(
             ?>
           </div>
         </div>
-        <div class="contenedor-iframe">
-          <iframe id='iframe<?=$idArea?>' style='display:none;'></iframe>
-        </div>
+   
         <?php
         $active = false;
         
@@ -236,4 +205,117 @@ $this->registerCssFile(
 </div>
   </div>
 </div>
+</div>
+
+<div style="display:block; position:absolute; top:-100000000px">
+<?php
+        $active = true;
+        foreach($resultados as $idArea=>$resultado){
+        ?>
+
+
+          <div class="row">
+            <?php
+            foreach($resultado["cuestionarios"] as $cuestionario){
+            ?>  
+            <div class="panel">
+              <div class="panel-body">
+              <br><br><br>
+                <section id="container-export-2-<?=$cuestionario["identificador"]?>">
+                  <h6 class="panel-title" style="margin-top:30px;">
+                    <small>
+                        Número de encuestados totales:<?=$cuestionario["numeroEncuestados"]?>
+                    </small><br>
+                    Área <?=$resultado['nombreArea']?> - <?=$cuestionario["cuestionarioNombre"]?><br>
+                    <small>
+                    <?=round($cuestionario["promedioTotal"], 1)?>
+                    </small>
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-3" style="margin-top:30px;">
+                      <?php
+                      $preguntaT = '';
+                      $index = 0;
+                      $preguntaV = '';
+                      $minimo = '';
+                      foreach($cuestionario['preguntas'] as $keys=>$pregunta){
+
+                        if ($pregunta === end($cuestionario['preguntas'])) {
+                          $preguntaT .= '"Pregunta '.++$index.'"';
+                          $preguntaV .= $pregunta['promedio']."";
+                          //$minimo .= $cuestionario["puntuacionPromedio"]."";
+                        }else{
+                          $preguntaT .= '"Pregunta '.++$index.'",';
+                          $preguntaV .= $pregunta['promedio'].",";
+                          //$minimo .= $cuestionario["puntuacionPromedio"].",";
+                        }
+                        
+                      ?>
+                      <div class="row">
+                        
+                        <div class="col-md-12">
+                          <br>
+                          <p>
+                          <span class="badge badge-outline badge-success">Pregunta <?=$index?></span>
+                          <br>  
+                          <?=$pregunta["textoPregunta"]?>
+                          </p>
+                          <br>
+                        </div>
+                      </div>
+                      
+                      <?php
+                      }
+                      ?>
+                    </div>
+                  
+                    <div class="col-md-9">
+                      <canvas id="chart-2-<?=$cuestionario["identificador"]?>">
+
+                      </canvas>
+
+                      <?php 
+                      $this->registerJs(
+                          '
+                          
+                          var index = 0;
+                          var ctx'.$cuestionario["identificador"].' = $("#chart-2-'.$cuestionario["identificador"].'");
+                          var myChart = new Chart(ctx'.$cuestionario["identificador"].', {
+                              type: "bar",
+                              data: {
+                                  labels: ['.$preguntaT.'],
+                                  datasets: [{
+                                      type: "bar",
+                                      label: "Total otros",
+                                      data: ['.$preguntaV.'],
+                                      //backgroundColor: colorInicial,
+                                      borderWidth: 1
+                                  },
+                                  
+                                  ]
+                              },
+                              options: optionsGrafica
+                          });
+                          ',
+                          View::POS_READY,
+                          $cuestionario["identificador"]."v2"
+                      );
+                      ?>
+
+                      </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+            <?php
+            }
+            ?>
+          </div>
+        
+   
+        <?php
+        $active = false;
+        
+        }
+        ?>
 </div>
