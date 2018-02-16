@@ -49,13 +49,13 @@ $this->registerCssFile(
     <h1 class="page-title"><?=$this->title?></h1>
     <div class="page-header-actions">
       
-        <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
+        <!-- <button class="btn btn-success float-right ladda-button" id="js-enviar-email" data-style="zoom-in">
             <span class="ladda-label">
                 Enviar evaluaciones
                 <i class="icon fa-send" aria-hidden="true"></i>
             </span>
             
-        </button>
+        </button> -->
     </div>
   </div>
   <!-- Media Content -->
